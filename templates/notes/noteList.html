@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{% url 'create_note' %}" class="btn btn-primary">Create new note</a>
+    {% for note in notes %}
+        <div class="card" style="width: 18rem;">
+            <img src="" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ note.title }}</h5>
+                <h5 class="card-title">{{ note.title }}</h5>
+                    <p class="card-text">{{ note.content }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">An item</li>
+                <li class="list-group-item">A second item</li>
+                <li class="list-group-item">A third item</li>
+            </ul>
+            <div class="card-body">
+                <a href="{% url 'update_note' note.id %}" class="card-link">Edit</a>
+                <a href="{% url 'delete_note' note.id %}" class="card-link">Delete</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
