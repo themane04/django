@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import UserRegisterForm
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 
 
@@ -42,11 +42,6 @@ def user_login(request):
             return render(request, 'users/login.html', {'error': 'Invalid email or password.'})
     else:
         return render(request, 'users/login.html')
-
-
-def custom_logout_view(request):
-    logout(request)
-    return redirect('home')  # Redirect to the homepage after logout
 
 
 def index(request):
