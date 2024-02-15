@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -119,3 +121,10 @@ def submit_comment(request, post_id):
             post = Post.objects.get(id=post_id)
             Comment.objects.create(post=post, author=request.user, content=comment_text)
     return redirect('home')
+
+
+def clean_username(self):
+    username = self.cleaned_data.get("username")
+    if User.objects.filter(username=username).exists():
+        raise ValidationError("A user with that username already exists.")
+    return username

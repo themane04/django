@@ -13,7 +13,7 @@
                                 on {{ post.created_at|date:"N j, Y" }}</h6>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
                             {% if user.is_authenticated and post.author == user %}
-                                <div class="text-end"> <!-- Add this div with the text-right class -->
+                                <div class="text-end">
                                     <form action="{% url 'post-delete' post.id %}" method="post"
                                           style="display: inline;">
                                         {% csrf_token %}

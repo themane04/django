@@ -1,11 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #12372A">
     <div class="container-lg">
-        <a class="navbar-brand navbar-brand-large" id="logo" href="{% url 'home' %}">Minigram</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <a class="navbar-brand d-flex align-items-center justify-content-center" href="#"
+           style="width: 100px; height: 100px;">
+            <img src="/static/images/logo.png" alt="" width="150" height="150" class="d-inline-block align-text-top">
+            <span>Minigram</span>
+        </a>
+
+        <div class="collapse navbar-collapse text-center" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Home</a>
