@@ -19,6 +19,12 @@ class UserRegisterForm(UserCreationForm):
             raise ValidationError("Email already exists")
         return email
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("A user with that username already exists.")
+        return username
+
 
 class PostForm(forms.ModelForm):
     class Meta:

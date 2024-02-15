@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import Post, Comment
+from .models import Post
 
 
 def register(request):
@@ -101,23 +101,6 @@ def post_detail(request, post_id):
     return render(request, 'users/post_detail.html', {'post': post, 'form': form})
 
 
-# def submit_comment(request, post_id):
-#     if request.method == 'POST':
-#         comment_text = request.POST.get('comment_text')
-#         post_id = request.POST.get('post_id')
-#         if comment_text and post_id:
-#             post = Post.objects.get(id=post_id)
-#             Comment.objects.create(post=post, author=request.user, content=comment_text)
-#     return redirect('home')
-
-
-def clean_username(self):
-    username = self.cleaned_data.get("username")
-    if User.objects.filter(username=username).exists():
-        raise ValidationError("A user with that username already exists.")
-    return username
-
-
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -139,4 +122,3 @@ def profile(request):
         }
 
         return render(request, 'users/profile.html', context)
-
