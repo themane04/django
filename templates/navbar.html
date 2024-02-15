@@ -5,8 +5,7 @@
             <img src="/static/images/logo.png" alt="" width="150" height="150" class="d-inline-block align-text-top">
             <span>Minigram</span>
         </a>
-
-        <div class="collapse navbar-collapse text-center" id="navbarNav">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Home</a>
@@ -31,7 +30,6 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                            <li><a class="dropdown-item" href="{% url 'profile' %}">Edit Profile</a></li>
                         </ul>
                     </li>
                 {% else %}

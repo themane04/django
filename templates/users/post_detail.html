@@ -1,29 +1,70 @@
-{% extends 'index.html' %}
-
+{% extends "index.html" %}
+{% load widget_tweaks %}
 {% block content %}
-    <div class="post-detail">
-        <!-- Display post content here -->
-        <h3>Comments</h3>
-        <div id="comments">
-            {% for comment in post.comments.all %}
-                <p><strong>{{ comment.author.username }}</strong> ({{ comment.created_at }}): {{ comment.content }}</p>
-            {% empty %}
-                <p>No comments yet. Be the first to comment!</p>
-            {% endfor %}
-        </div>
-
-        {% if user.is_authenticated %}
-            <div class="comment-form">
-                <h4>Leave a comment</h4>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ comment_form.as_p }}
-                    <button type="submit" class="btn btn-primary">Post Comment</button>
-                </form>
-
+    <!-- post_detail.html -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Post Title -->
+                <h2 class="mb-3 text-center" style="font-weight: bold; color: #007bff;">{{ post.title }}</h2>
+                <!-- Divider -->
+                <hr class="my-4">
+                <!-- Author with Styling -->
+                <p class="font-italic text-muted">
+                    {{ post.author }}
+                </p>
+                <!-- Post Content -->
+                <p class="mb-4 text-justify" style="font-size: 1.1em; line-height: 1.6;">
+                    {{ post.content }}
+                </p>
             </div>
-        {% else %}
-            <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
-        {% endif %}
+        </div>
+    </div>
+    <!-- Display existing comments -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <!-- Comments Heading -->
+                <h3>Comments</h3>
+                <div class="mb-3">
+                    {% for comment in comments %}
+                        <div class="card mb-2" style="background-color: #FBFADA">
+                            <div class="card-body">
+                                <h5 class="card-title"><strong>{{ comment.author.username }}</strong> said:</h5>
+                                <p class="card-text">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Comment Form -->
+                {% if user.is_authenticated %}
+                    <form method="post" class="mb-3">
+                        {% csrf_token %}
+                        {% for field in comment_form %}
+                            <div class="form-group">
+                                {% if field.label %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% endif %}
+                                {{ field | add_class:"form-control" }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+                    </form>
+                {% else %}
+                    <p><a href="{% url 'login' %}" class="btn btn-primary">Log in</a> to post comments.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -12,16 +12,29 @@
                             <h6 class="card-subtitle mb-2 text-muted">{{ post.author.username }}
                                 on {{ post.created_at|date:"N j, Y" }}</h6>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
-                            {% if user.is_authenticated and post.author == user %}
-                                <div class="text-end">
-                                    <form action="{% url 'post-delete' post.id %}" method="post"
-                                          style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
-                                    <a href="{% url 'edit-post' post.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm">
+                                        <i class="fa fa-comments" aria-hidden="true"></i>
+                                    </a>
+                                    <span class="badge bg-secondary">{{ post.comments.count }}</span>
                                 </div>
-                            {% endif %}
+                                <div>
+                                    {% if user.is_authenticated and post.author == user %}
+                                        <form action="{% url 'post-delete' post.id %}" method="post"
+                                              style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                        <a href="{% url 'edit-post' post.id %}"
+                                           class="btn btn-secondary btn-sm">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer text-muted">
                             {% if post.updated_at %}
