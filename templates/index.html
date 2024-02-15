@@ -22,15 +22,54 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 <style>
-    .align-to-right {
-        margin-left: auto;
+    html {
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
-    .navbar-brand-large {
-        font-size: 250%;
+    /* For the scrollbar track */
+    ::-webkit-scrollbar {
+        width: 10px;
     }
-    
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: black;
+        border-radius: 6px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .navbar {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #12372A;
+    }
+
 
 </style>
+<script>
+    function adjustNavbarForScrollbar() {
+        // Calculate the difference between the viewport's width and the window's width.
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+        // If there is a vertical scrollbar, then there's no need to adjust the navbar.
+        if (scrollbarWidth > 0) {
+            document.body.style.paddingRight = '';
+        } else {
+            // Add padding to the body equal to the scrollbar's width.
+            document.body.style.paddingRight = scrollbarWidth + 'px';
+        }
+    }
+
+    // Run the function on load and on resize.
+    window.onload = adjustNavbarForScrollbar;
+    window.onresize = adjustNavbarForScrollbar;
+</script>
 </body>
 </html>

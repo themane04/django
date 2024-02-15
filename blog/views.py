@@ -3,7 +3,6 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-
 from .forms import UserRegisterForm, PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
