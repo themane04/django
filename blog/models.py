@@ -25,7 +25,10 @@ class Comment(models.Model):
         return f'Comment by {self.author} on {self.post}'
 
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to='profile_pics', default='default.jpg')
+    bio = models.TextField()
+
+    def __str__(self):
+        return f'{self.user.username} Profile'

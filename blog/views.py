@@ -3,31 +3,26 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserRegisterForm, PostForm, CommentForm
+from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth import get_user_model
 from .models import Post, Comment
 
 
 def register(request):
+    form = UserRegisterForm()
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.first_name = form.cleaned_data.get('first_name')
-            user.last_name = form.cleaned_data.get('last_name')
-            user.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
+            form.save()
+            # message from django to display a message to the user after the registration is successful
+            messages.success(request, f'Account created for {form.cleaned_data['username']}!')
             return redirect('home')
-    else:
-        form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
 
 def user_login(request):
-    User = get_user_model()
+    context = {'error': None}
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -35,17 +30,13 @@ def user_login(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = None
+            context['error'] = 'Invalid email or password.'
         if user is not None:
             user = authenticate(username=user.username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('home')
-            else:
-                return render(request, 'users/login.html', {'error': 'Invalid email or password.'})
-        else:
-            return render(request, 'users/login.html', {'error': 'Invalid email or password.'})
-    else:
-        return render(request, 'users/login.html')
+    return render(request, 'users/login.html', context)
 
 
 def user_logout(request):
@@ -84,17 +75,14 @@ def post_delete(request, post_id):
 @login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-
+    form = PostForm(instance=post)
     if request.user != post.author:
         return redirect('home')
-
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
             return redirect('home')
-    else:
-        form = PostForm(instance=post)
     return render(request, 'users/edit_post.html', {'form': form})
 
 
@@ -113,14 +101,14 @@ def post_detail(request, post_id):
     return render(request, 'users/post_detail.html', {'post': post, 'form': form})
 
 
-def submit_comment(request, post_id):
-    if request.method == 'POST':
-        comment_text = request.POST.get('comment_text')
-        post_id = request.POST.get('post_id')
-        if comment_text and post_id:
-            post = Post.objects.get(id=post_id)
-            Comment.objects.create(post=post, author=request.user, content=comment_text)
-    return redirect('home')
+# def submit_comment(request, post_id):
+#     if request.method == 'POST':
+#         comment_text = request.POST.get('comment_text')
+#         post_id = request.POST.get('post_id')
+#         if comment_text and post_id:
+#             post = Post.objects.get(id=post_id)
+#             Comment.objects.create(post=post, author=request.user, content=comment_text)
+#     return redirect('home')
 
 
 def clean_username(self):
@@ -128,3 +116,27 @@ def clean_username(self):
     if User.objects.filter(username=username).exists():
         raise ValidationError("A user with that username already exists.")
     return username
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        u_form = UserRegisterForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('profile')
+        else:
+            u_form = UserRegisterForm(instance=request.user)
+            p_form = ProfileUpdateForm(instance=request.user.profile)
+
+        context = {
+            'u_form': u_form,
+            'p_form': p_form
+        }
+
+        return render(request, 'users/profile.html', context)
+
