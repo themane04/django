@@ -4,7 +4,7 @@
     <!-- post_detail.html -->
     <div class="container mt-5">
         <div class="row">
-            <div class="col-lg-8 mx-auto">
+            <div class="col-lg-8 mx-auto" style="background-color: #FBFBBB; border-radius: 5px">
                 <!-- Post Title -->
                 <h2 class="mb-3 text-center" style="font-weight: bold; color: #007bff;">{{ post.title }}</h2>
                 <!-- Divider -->
@@ -32,6 +32,16 @@
                             <div class="card-body">
                                 <h5 class="card-title"><strong>{{ comment.author.username }}</strong> said:</h5>
                                 <p class="card-text">{{ comment.content }}</p>
+                                <!-- Delete Comment Button -->
+                                {% if user.is_authenticated and user == post.author %}
+                                    <form action="{% url 'comment_delete' comment.id %}" method="post"
+                                          style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete Comment">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

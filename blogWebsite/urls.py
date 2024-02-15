@@ -1,4 +1,6 @@
 from django.urls import path
+
+from blog import views
 from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail
 from django.conf import settings
 from django.conf.urls.static import static
@@ -12,6 +14,8 @@ urlpatterns = [
     path('post/delete/<int:post_id>', post_delete, name='post-delete'),
     path('post/edit/<int:post_id>', edit_post, name='edit-post'),
     path('post/<int:post_id>', post_detail, name='post_detail'),
+    path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
+
 ]
 
 if settings.DEBUG:

@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+
 from .forms import UserRegisterForm, PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import Post
+from .models import Post, Comment
 
 
 def register(request):
@@ -87,7 +89,7 @@ def edit_post(request, post_id):
 @login_required
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comments = post.comments.all() # Assuming your Post model has a related_name='comments' in the ForeignKey of Comment model
+    comments = post.comments.all()  # Model has a related_name='comments' in the ForeignKey of Comment model
     new_comment = None
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
@@ -101,3 +103,14 @@ def post_detail(request, post_id):
         comment_form = CommentForm()
     return render(request, 'users/post_detail.html',
                   {'post': post, 'comments': comments, 'comment_form': comment_form})
+
+
+def comment_delete(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    post = comment.post
+    if request.user.is_authenticated and request.user == post.author:
+        comment.delete()
+        messages.success(request, "Comment deleted successfully.")
+        return redirect(reverse('post_detail', args=[post.id]))
+    else:
+        return HttpResponseForbidden()
