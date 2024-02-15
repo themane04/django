@@ -1,9 +1,11 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from .forms import UserRegisterForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import UserRegisterForm, PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
+from .models import Post
 
 
 def register(request):
@@ -50,4 +52,61 @@ def user_logout(request):
 
 
 def home(request):
-    return render(request, 'home.html')
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'home.html', {'posts': posts})
+
+
+#
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('home')
+    else:
+        form = PostForm()
+    return render(request, 'users/create_post.html', {'form': form})
+
+
+def post_delete(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        return HttpResponse()
+    post.delete()
+    return redirect('home')
+
+
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user != post.author:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'users/edit_post.html', {'form': form})
+
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all()
+    new_comment = None
+
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.author = request.user
+            new_comment.save()
+            return redirect(post)
+    else:
+        comment_form = CommentForm()
+    return render(request, 'users/post_detail.html', {'post': post, 'comment_form': comment_form})
