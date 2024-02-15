@@ -44,5 +44,10 @@ def user_login(request):
         return render(request, 'users/login.html')
 
 
-def index(request):
-    return render(request, 'index.html')
+def user_logout(request):
+    request.session.flush()
+    return redirect('home')
+
+
+def home(request):
+    return render(request, 'home.html')
