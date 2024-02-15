@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
-from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail
+from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
+    submit_comment
 from django.conf import settings
 from django.conf.urls.static import static
 

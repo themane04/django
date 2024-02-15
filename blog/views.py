@@ -5,7 +5,7 @@ from .forms import UserRegisterForm, PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
-from .models import Post
+from .models import Post, Comment
 
 
 def register(request):
@@ -70,6 +70,7 @@ def create_post(request):
     return render(request, 'users/create_post.html', {'form': form})
 
 
+@login_required
 def post_delete(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if post.author != request.user:
@@ -78,6 +79,7 @@ def post_delete(request, post_id):
     return redirect('home')
 
 
+@login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -95,18 +97,25 @@ def edit_post(request, post_id):
 
 
 def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    comments = post.comments.all()
-    new_comment = None
-
+    post = get_object_or_404(Post, pk=post_id)
     if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            new_comment = comment_form.save(commit=False)
-            new_comment.post = post
-            new_comment.author = request.user
-            new_comment.save()
-            return redirect(post)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            return redirect('post_detail', post_id=post.id)
     else:
-        comment_form = CommentForm()
-    return render(request, 'users/post_detail.html', {'post': post, 'comment_form': comment_form})
+        form = CommentForm()
+    return render(request, 'users/post_detail.html', {'post': post, 'form': form})
+
+
+def submit_comment(request, post_id):
+    if request.method == 'POST':
+        comment_text = request.POST.get('comment_text')
+        post_id = request.POST.get('post_id')
+        if comment_text and post_id:
+            post = Post.objects.get(id=post_id)
+            Comment.objects.create(post=post, author=request.user, content=comment_text)
+    return redirect('home')
