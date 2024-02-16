@@ -19,5 +19,6 @@ urlpatterns = [
                   path('profile/', edit_profile, name='edit_profile'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# ensuring that the media files are served during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

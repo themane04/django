@@ -12,14 +12,15 @@
                       class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div style="display: flex; justify-content: center;">
-                        <img src="/static/images/default_profile_picture.png" alt="Description" style="width: 100px; height: 100px;">
+                        <img src="{{ user.profile.profile_pic.url }}" alt="Profile Image"
+                             style="width: 100px; height: 100px;">
                     </div>
                     <div class="mb-3">
                         <label for="profileImageInput" class="form-label">Profile Image</label>
                         <input type="file" class="form-control" id="profileImageInput" name="profile_pic"
                                accept="image/*">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="usernameInput" class="form-label">Username</label>
                         <input type="text" class="form-control" id="usernameInput" name="username"
@@ -28,7 +29,7 @@
                             Please choose a username.
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="emailInput" class="form-label">Email</label>
                         <input type="email" class="form-control" id="emailInput" name="email"
@@ -37,7 +38,7 @@
                             Please enter a valid email address.
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="bioInput" class="form-label">Bio</label>
                         <textarea class="form-control" id="bioInput" name="bio"
