@@ -15,7 +15,6 @@ urlpatterns = [
     path('post/edit/<int:post_id>', edit_post, name='edit-post'),
     path('post/<int:post_id>', post_detail, name='post_detail'),
     path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
-
 ]
 
 if settings.DEBUG:

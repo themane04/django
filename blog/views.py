@@ -49,7 +49,7 @@ def home(request):
     return render(request, 'home.html', {'posts': posts})
 
 
-#
+@login_required
 def create_post(request):
     form = PostForm()
     if request.method == 'POST':
@@ -85,7 +85,6 @@ def edit_post(request, post_id):
     return render(request, 'users/edit_post.html', {'form': form})
 
 
-@login_required
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all()  # Model has a related_name='comments' in the ForeignKey of Comment model
@@ -104,6 +103,7 @@ def post_detail(request, post_id):
                   {'post': post, 'comments': comments, 'comment_form': comment_form})
 
 
+@login_required
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     post = comment.post
