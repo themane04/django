@@ -24,12 +24,16 @@
             <ul class="navbar-nav align-right ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/static/images/default_profile_picture.png"
+                                 alt="Profile Image"
+                                 style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">
                             {{ user.username }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
                         </ul>
                     </li>
                 {% else %}

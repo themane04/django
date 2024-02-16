@@ -132,3 +132,8 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_URL = '/login/'
+
+DEFAULT_PROFILE_IMAGE = 'static/images/default_profile_picture.png'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

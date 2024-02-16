@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .forms import UserRegisterForm, PostForm, CommentForm
+from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .models import Post, Comment
@@ -113,3 +113,33 @@ def comment_delete(request, comment_id):
         return redirect(reverse('post_detail', args=[post.id]))
     else:
         return HttpResponseForbidden()
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.email = user_form.cleaned_data.get('email')
+            user_form.save()
+
+            if 'profile_pic' in request.FILES:
+                profile = profile_form.save(commit=False)
+                profile.profile_pic = request.FILES['profile_pic']
+                profile.save()
+            else:
+                profile_form.save()
+
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('home')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+    return render(request, 'users/profile.html', context)

@@ -26,7 +26,7 @@ class Comment(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(upload_to='profile_pics', default='default.jpg')
+    profile_pic = models.ImageField(upload_to='profile_pics/', default='default.jpg')
     bio = models.TextField()
 
     def __str__(self):

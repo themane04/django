@@ -1,11 +1,51 @@
 {% extends "index.html" %}
+{% load widget_tweaks %}
+
 {% block content %}
-    <div class="container">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ u_form.as_p }}
-            {{ p_form.as_p }}
-            <button type="submit">Update</button>
-        </form>
+    <h1 class="text-center mt-5 mb-5">
+        Profile Settings
+    </h1>
+    <div class="container mt-3">
+        <div class="card" style="background-color: #FBFADA">
+            <div class="card-body">
+                <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data"
+                      class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div style="display: flex; justify-content: center;">
+                        <img src="/static/images/default_profile_picture.png" alt="Description" style="width: 100px; height: 100px;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileImageInput" class="form-label">Profile Image</label>
+                        <input type="file" class="form-control" id="profileImageInput" name="profile_pic"
+                               accept="image/*">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="usernameInput" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="usernameInput" name="username"
+                               placeholder="Username" value="{{ user_form.username.value }}" required>
+                        <div class="invalid-feedback">
+                            Please choose a username.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="emailInput" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="emailInput" name="email"
+                               placeholder="user@example.com" value="{{ user_form.email.value }}" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bioInput" class="form-label">Bio</label>
+                        <textarea class="form-control" id="bioInput" name="bio"
+                                  rows="3">{{ profile_form.bio.value }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

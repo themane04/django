@@ -1,0 +1,8 @@
+signals.py: Created to define signal receivers that listen for the post_save event of the User model.
+When a user is saved, it either creates a new profile (if the user is newly created) or updates an existing one.
+
+apps.py: Modified the BlogConfig class by overriding the ready method to import blog.signals, ensuring signal
+registration upon app startup.
+
+init.py: Updated to ensure Django uses the custom BlogConfig for app configuration by adding
+default_app_config = 'blog.apps.BlogConfig', which is crucial for activating the signals setup in apps.py and signals.py.
