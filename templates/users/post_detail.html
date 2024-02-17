@@ -27,6 +27,11 @@
                 <p class="mb-4 text-justify" style="font-size: 1.1em; line-height: 1.6;">
                     {{ post.content }}
                 </p>
+                {% if post.image %}
+                    <div class="post-image pb-3">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:50%;">
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

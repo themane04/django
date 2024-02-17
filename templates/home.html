@@ -22,6 +22,11 @@
                             </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                            {% if post.image %}
+                                <div class="post-image pb-3">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:50%;">
+                                </div>
+                            {% endif %}
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm">
