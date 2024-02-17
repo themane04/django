@@ -134,6 +134,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+# LOGIN_URL is the URL where requests are redirected for login, especially when using the login_required() decorator.
 LOGIN_URL = '/login/'
 
 # MEDIA_ROOT is the filesystem path to the directory that will hold user-uploaded files.
@@ -143,4 +144,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # It's used to generate the URL for these files.
 MEDIA_URL = '/media/'
 
+# STATIC_ROOT is the filesystem path to the directory that will hold static files collected from each of the apps.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

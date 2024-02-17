@@ -1,3 +1,7 @@
+
+# apps.py: Modified the BlogConfig class by overriding the ready method to import blog.signals, ensuring signal
+# registration upon app startup.
+
 from django.apps import AppConfig
 
 

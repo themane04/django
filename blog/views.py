@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login
 from .models import Post, Comment
 
 
+# function that handles the registration of a new user
 def register(request):
     form = UserRegisterForm()
     if request.method == 'POST':
@@ -23,6 +24,7 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 
+# function that handles the login of a user
 def user_login(request):
     context = {'error': None}
     if request.method == "POST":
@@ -41,16 +43,19 @@ def user_login(request):
     return render(request, 'users/login.html', context)
 
 
+# function that handles the logout of a user
 def user_logout(request):
     request.session.flush()
     return redirect('home')
 
 
+# function that handles the home page of the website
 def home(request):
     posts = Post.objects.all().order_by('-created_at')
     return render(request, 'home.html', {'posts': posts})
 
 
+# function that handles the profile page of a user
 @login_required
 def create_post(request):
     form = PostForm()
@@ -64,6 +69,7 @@ def create_post(request):
     return render(request, 'users/create_post.html', {'form': form})
 
 
+# function that allows a user to delete a post
 @login_required
 def post_delete(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -73,6 +79,7 @@ def post_delete(request, post_id):
     return redirect('home')
 
 
+# function that allows a user to edit a post
 @login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -87,6 +94,7 @@ def edit_post(request, post_id):
     return render(request, 'users/edit_post.html', {'form': form})
 
 
+# function that allows a user to view and comment a post
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all()  # Model has a related_name='comments' in the ForeignKey of Comment model
@@ -95,8 +103,8 @@ def post_detail(request, post_id):
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
-            new_comment.post = post  # Assuming your Comment model has a 'post' ForeignKey to Post
-            new_comment.author = request.user  # Assuming your Comment model has an 'author' ForeignKey to User
+            new_comment.post = post
+            new_comment.author = request.user
             new_comment.save()
             return redirect('post_detail', post_id=post_id)  # Redirect to the same page to display the new comment
     else:
@@ -105,6 +113,7 @@ def post_detail(request, post_id):
                   {'post': post, 'comments': comments, 'comment_form': comment_form})
 
 
+# function that allows a user to like a post
 @login_required
 @require_POST
 def like_post(request, post_id):
@@ -120,6 +129,7 @@ def like_post(request, post_id):
     })
 
 
+# function that allows a user to delete a comment
 @login_required
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
@@ -132,6 +142,7 @@ def comment_delete(request, comment_id):
         return HttpResponseForbidden()
 
 
+# function that allows a user to edit his profile information
 @login_required
 def edit_profile(request):
     if request.method == 'POST':

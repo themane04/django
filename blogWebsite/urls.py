@@ -18,7 +18,9 @@ urlpatterns = [
                   path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
                   path('profile/', edit_profile, name='edit_profile'),
                   path('like/<int:post_id>', like_post, name='like_post'),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.MEDIA_URL,
+                         document_root=settings.MEDIA_ROOT)  # This line is added for the purpose of serving media
+                                                                        # files during development
 
 # ensuring that the media files are served during development
 if settings.DEBUG:

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# Create a post model.
+# A model for the posts that will be created by the users
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -16,6 +16,7 @@ class Post(models.Model):
         return self.title
 
 
+# A model for the comments that will be created by the users
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -26,6 +27,7 @@ class Comment(models.Model):
         return f'Comment by {self.author} on {self.post}'
 
 
+# A model for the user profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pics/')

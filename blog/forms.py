@@ -5,6 +5,7 @@ from .models import Post, Comment, Profile
 from django.core.exceptions import ValidationError
 
 
+# A class that inherits from UserCreationForm to create a form for the registration of a new user
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -26,18 +27,21 @@ class UserRegisterForm(UserCreationForm):
         return username
 
 
+# A class that inherits from ModelForm to create a form for the creation of a new post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'image']
 
 
+# A class that inherits from ModelForm to create a form for the creation of a new comment
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
 
 
+# A class that inherits from ModelForm to create a form for the update of a user profile
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -46,6 +50,7 @@ class ProfileUpdateForm(forms.ModelForm):
     bio = forms.CharField(required=False, widget=forms.Textarea)
 
 
+# A class that inherits from ModelForm to create a form for the update of a user
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
