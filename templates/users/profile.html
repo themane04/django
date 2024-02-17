@@ -1,4 +1,5 @@
 {% extends "index.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block content %}
@@ -12,8 +13,11 @@
                       class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div style="display: flex; justify-content: center;">
-                        <img src="{{ user.profile.profile_pic.url }}" alt="Profile Image"
-                             style="width: 100px; height: 100px;">
+                        {% if user.profile.profile_pic %}
+                            <img src="{{ user.profile.profile_pic.url }}" style="height: 150px; width: 150px" alt="Profile picture">
+                        {% else %}
+                            <img src="{% static 'images/default_profile_picture.png' %}" alt="Default profile picture">
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label for="profileImageInput" class="form-label">Profile Image</label>

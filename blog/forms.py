@@ -43,6 +43,8 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['profile_pic', 'bio']
 
+    bio = forms.CharField(required=False, widget=forms.Textarea)
+
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

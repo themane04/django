@@ -17,6 +17,7 @@ urlpatterns = [
                   path('post/<int:post_id>', post_detail, name='post_detail'),
                   path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
                   path('profile/', edit_profile, name='edit_profile'),
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # ensuring that the media files are served during development
