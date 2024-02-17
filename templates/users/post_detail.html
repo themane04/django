@@ -1,4 +1,5 @@
 {% extends "index.html" %}
+{% load static %}
 {% load widget_tweaks %}
 {% block content %}
     <!-- post_detail.html -->
@@ -11,7 +12,16 @@
                 <hr class="my-4">
                 <!-- Author with Styling -->
                 <p class="font-italic text-muted">
-                    {{ post.author }}
+                    {% if post.author.profile.profile_pic %}
+                        <img src="{{ post.author.profile.profile_pic.url }}" alt="{{ post.author.username }}"
+                             style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle;">
+                        {{ post.author.username }}
+                    {% else %}
+                        <img src="{% static 'images/default_profile_picture.png' %}" alt="Default profile picture"
+                             style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle;">
+                        {{ post.author.username }}
+                    {% endif %}
+                    on {{ post.created_at|date:"N j, Y" }}
                 </p>
                 <!-- Post Content -->
                 <p class="mb-4 text-justify" style="font-size: 1.1em; line-height: 1.6;">
@@ -30,7 +40,18 @@
                     {% for comment in comments %}
                         <div class="card mb-2" style="background-color: #FBFADA">
                             <div class="card-body">
-                                <h5 class="card-title"><strong>{{ comment.author.username }}</strong> said:</h5>
+                                <h5 class="card-title">
+                                    {% if comment.author.profile.profile_pic %}
+                                        <img src="{{ comment.author.profile.profile_pic.url }}"
+                                             alt="{{ comment.author.username }}"
+                                             style="width: 30px; height: 30px; border-radius: 50%;">
+                                    {% else %}
+                                        <img src="{% static 'images/default_profile_picture.png' %}"
+                                             alt="Default profile picture"
+                                             style="width: 30px; height: 30px; border-radius: 50%;">
+                                    {% endif %}
+                                    <strong>{{ comment.author.username }}</strong> said:
+                                </h5>
                                 <p class="card-text">{{ comment.content }}</p>
                                 <!-- Delete Comment Button -->
                                 {% if user.is_authenticated and user == post.author %}
@@ -72,7 +93,8 @@
                         <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
                     </form>
                 {% else %}
-                    <p class="text-center" style="background-color: #FBFBBB; border-radius: 5px"><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to post
+                    <p class="text-center" style="background-color: #FBFBBB; border-radius: 5px"><a
+                            href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to post
                         comments.</p>
                 {% endif %}
             </div>

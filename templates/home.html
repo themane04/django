@@ -8,9 +8,19 @@
                 <div class="m-5">
                     <div class="card" style="background-color: #ADBC9F">
                         <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% if post.author.profile.profile_pic %}
+                                    <img src="{{ post.author.profile.profile_pic.url }}"
+                                         alt="{{ post.author.username }}"
+                                         style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
+                                {% else %}
+                                    <img src="{% static 'images/default_profile_picture.png' %}"
+                                         alt="Default profile picture"
+                                         style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
+                                {% endif %}
+                                {{ post.author.username }} on {{ post.created_at|date:"N j, Y" }}
+                            </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ post.author.username }}
-                                on {{ post.created_at|date:"N j, Y" }}</h6>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
                             <div class="d-flex justify-content-between">
                                 <div>
