@@ -21,7 +21,7 @@
                              style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle;">
                         {{ post.author.username }}
                     {% endif %}
-                    on {{ post.created_at|date:"N j, Y" }}
+                    on {{ post.created_at|date:"N j, Y, H:i" }}
                 </p>
 
                 <p class="mb-4 text-justify" style="font-size: 1.1em; line-height: 1.6;">
@@ -73,6 +73,7 @@
                     {% for comment in comments %}
                         <div class="card mb-2" style="background-color: #FBFADA">
                             <div class="card-body">
+                                <p>{{ comment.created_at|date:"N j, Y, H:i" }}</p>
                                 <h5 class="card-title">
                                     {% if comment.author.profile.profile_pic %}
                                         <img src="{{ comment.author.profile.profile_pic.url }}"

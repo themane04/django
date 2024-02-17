@@ -18,7 +18,7 @@
                                          alt="Default profile picture"
                                          style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
                                 {% endif %}
-                                {{ post.author.username }} on {{ post.created_at|date:"N j, Y" }}
+                                {{ post.author.username }} on {{ post.created_at|date:"N j, Y, H:i" }}
                             </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
@@ -85,9 +85,9 @@
                         </div>
                         <div class="card-footer text-muted">
                             {% if post.updated_at %}
-                                Last updated on {{ post.updated_at|date:"N j, Y" }}
+                                Last updated on {{ post.updated_at|date:"N j, Y, H:i" }}
                             {% else %}
-                                Created on {{ post.created_at|date:"N j, Y" }}
+                                Created on {{ post.created_at|date:"N j, Y, H:i" }}
                             {% endif %}
                         </div>
                     </div>
