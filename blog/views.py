@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.text import slugify
+from django.views.decorators.http import require_POST
 
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
@@ -105,6 +106,21 @@ def post_detail(request, post_id):
 
 
 @login_required
+@require_POST
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    liked = not post.likes.filter(id=request.user.id).exists()
+    if liked:
+        post.likes.add(request.user)
+    else:
+        post.likes.remove(request.user)
+    return JsonResponse({
+        'liked': liked,
+        'like_count': post.likes.count()
+    })
+
+
+@login_required
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     post = comment.post
@@ -135,6 +151,3 @@ def edit_profile(request):
         'profile_form': profile_form,
     }
     return render(request, 'users/profile.html', context)
-
-
-

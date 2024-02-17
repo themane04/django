@@ -21,6 +21,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
     html {
         overflow-y: scroll;
@@ -69,6 +71,96 @@
             document.body.style.paddingRight = scrollbarWidth + 'px';
         }
     }
+
+    $(document).ready(function () {
+        $('.like-button').click(function (e) {
+            e.preventDefault();
+            var postId = $(this).data('post-id');
+            var likeCount = $(this).find('.like-count');
+            var likeIcon = $(this).find('i');
+
+            $.ajax({
+                url: '{% url "like_post" 0 %}'.replace('0', postId),
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    post_id: postId,
+                },
+                success: function (response) {
+                    if (response.liked) {
+                        likeIcon.removeClass('far').addClass('fas').css('color', 'red');
+                    } else {
+                        likeIcon.removeClass('fas').addClass('far').css('color', '');
+                    }
+                    likeCount.text(response.like_count);
+                },
+                error: function (response) {
+                    // Handle error, e.g., unauthenticated user
+                    if (response.status === 403) {
+                        // Show popup for unauthenticated user
+                        alert('Please register or log in to like posts.');
+                    }
+                }
+            });
+        });
+    });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $('.like-button').click(function (e) {
+        e.preventDefault();
+        var postId = $(this).data('post-id');
+        var likeCount = $(this).find('.like-count');
+        var likeIcon = $(this).find('i');
+
+        $.ajax({
+            url: '{% url "like_post" 0 %}'.replace('0', postId),
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                post_id: postId,
+            },
+            success: function (response) {
+                if (response.liked) {
+                    likeIcon.removeClass('far').addClass('fas').css('color', 'red');
+                } else {
+                    likeIcon.removeClass('fas').addClass('far').css('color', '');
+                }
+                likeCount.text(response.like_count);
+            },
+            error: function (response) {
+                if (response.status === 403 || response.status === 302) {
+                    // Assuming you have a Bootstrap modal with id #loginModal
+                    $('#loginModal').modal('show');
+                }
+            }
+        });
+    });
+
+
 </script>
 </body>
 </html>

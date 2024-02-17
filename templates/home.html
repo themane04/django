@@ -35,7 +35,7 @@
                                      aria-labelledby="imageModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                         <div class="modal-content" style="background: transparent; border: none;">
-                                            <div style="font-size: 2rem; text-align: right;">
+                                            <div style="font-size: 2rem; text-align: left;">
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>
@@ -49,11 +49,22 @@
                             {% endif %}
 
                             <div class="d-flex justify-content-between">
-                                <div>
-                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm">
-                                        <i class="fa fa-comments" aria-hidden="true"></i>
+                                <div style="display: flex; align-items: center;">
+                                    <a style="font-size: 1.3rem; text-decoration: none" href="#" class="like-button"
+                                       data-post-id="{{ post.id }}">
+                                        {% if user in post.likes.all %}
+                                            <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
+                                        {% else %}
+                                            <i class="far fa-heart"></i> <!-- Not liked -->
+                                        {% endif %}
+                                        <span class="like-count">{{ post.likes.count }}</span>
                                     </a>
-                                    <span class="badge bg-secondary">{{ post.comments.count }}</span>
+                                    <!-- Comment button -->
+                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm"
+                                       style="margin-left: 1rem;">
+                                        <i class="fa fa-comments" aria-hidden="true"></i>
+                                        <span style="margin-left: 0.6rem">{{ post.comments.count }}</span>
+                                    </a>
                                 </div>
                                 <div>
                                     {% if user.is_authenticated and post.author == user %}
