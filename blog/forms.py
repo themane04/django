@@ -39,6 +39,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'style': 'resize:none;'})
+        }
 
 
 # A class that inherits from ModelForm to create a form for the update of a user profile

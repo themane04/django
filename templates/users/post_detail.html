@@ -23,18 +23,18 @@
                     {% endif %}
                     on {{ post.created_at|date:"N j, Y" }}
                 </p>
-                <!-- Post Content -->
+
                 <p class="mb-4 text-justify" style="font-size: 1.1em; line-height: 1.6;">
                     {{ post.content }}
                 </p>
-                <!-- Update data-target in the image tag -->
+
                 {% if post.image %}
                     <div class="post-image pb-3">
                         <img src="{{ post.image.url }}" alt="{{ post.title }}"
                              style="max-width:50%; cursor: pointer;"
                              data-bs-toggle="modal" data-bs-target="#imageModal{{ post.id }}">
                     </div>
-                    <!-- Update the modal's ID -->
+
                     <div class="modal fade" id="imageModal{{ post.id }}" tabindex="-1" role="dialog"
                          aria-labelledby="imageModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -51,6 +51,15 @@
                         </div>
                     </div>
                 {% endif %}
+                <a style="font-size: 1.3rem; text-decoration: none;" href="#" class="like-button"
+                   data-post-id="{{ post.id }}">
+                    {% if user in post.likes.all %}
+                        <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
+                    {% else %}
+                        <i class="far fa-heart"></i> <!-- Not liked -->
+                    {% endif %}
+                    <span class="like-count">{{ post.likes.count }}</span>
+                </a>
             </div>
         </div>
     </div>
@@ -59,7 +68,7 @@
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <!-- Comments Heading -->
-                <h3>Comments</h3>
+                <h3><span style="margin-right: 0.3rem">{{ post.comments.count }}</span>Comments</h3>
                 <div class="mb-3">
                     {% for comment in comments %}
                         <div class="card mb-2" style="background-color: #FBFADA">
@@ -101,7 +110,7 @@
                                 {% if field.label %}
                                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {% endif %}
-                                {{ field | add_class:"form-control" }}
+                                    {{ field|add_class:"form-control"|attr:"style:resize:none;" }}
                                 {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                 {% endif %}

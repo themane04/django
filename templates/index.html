@@ -30,7 +30,7 @@
         overflow-y: scroll;
         overflow-x: hidden;
     }
-    
+
     body {
         background-color: #436850
     }
@@ -61,6 +61,11 @@
     #nav-element {
         padding-left: 17%;
         font-size: 1.2rem;
+    }
+
+    .comment-field {
+        resize: none;
+        height: 150px;
     }
 
 </style>
@@ -165,6 +170,13 @@
         });
     });
 
+    // function that adjusts the input field height to match the content
+    $(document).ready(function () {
+        $('.form-control').on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    });
 
 </script>
 </body>

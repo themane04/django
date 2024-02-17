@@ -29,13 +29,13 @@
                            aria-expanded="false">
                             {% if user.profile.profile_pic %}
                                 <img src="{{ user.profile.profile_pic.url }}" alt="Profile Image"
-                                     style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">
+                                     style="width: 25px; height: 25px; border-radius: 20%; margin-right: 10px;">
                             {% else %}
                                 <img src="{% static '/images/default_profile_picture.png' %}"
                                      alt="Default Profile Image"
                                      style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">
                             {% endif %}
-                            {{ user.username }}
+                            <span class="text-warning">{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
