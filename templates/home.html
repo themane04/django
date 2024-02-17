@@ -22,11 +22,32 @@
                             </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
                             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+
+                            <!-- Update data-target in the image tag -->
                             {% if post.image %}
                                 <div class="post-image pb-3">
-                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:50%;">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                         style="max-width:50%; cursor: pointer;"
+                                         data-bs-toggle="modal" data-bs-target="#imageModal{{ post.id }}">
+                                </div>
+                                <!-- Update the modal's ID -->
+                                <div class="modal fade" id="imageModal{{ post.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="imageModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                        <div class="modal-content" style="background: transparent; border: none;">
+                                            <div style="font-size: 2rem; text-align: right;">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div>
+                                                <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                                     style="width: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endif %}
+
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm">
