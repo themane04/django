@@ -45,6 +45,18 @@
 
     .navbar {
         background-color: #12372A;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #nav-element {
+        padding-left: 17%;
+        font-size: 1.2rem;
+    }
+
+    #nav-element.active {
+        color: rgb(255, 0, 0);
     }
 
 
@@ -66,6 +78,15 @@
     // Run the function on load and on resize.
     window.onload = adjustNavbarForScrollbar;
     window.onresize = adjustNavbarForScrollbar;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentPage = window.location.pathname;
+
+        const navElement = document.querySelector('#nav-element[data-page="' + currentPage + '"]');
+        if (navElement) {
+            navElement.classList.add('active');
+        }
+    });
 </script>
 </body>
 </html>
