@@ -4,6 +4,16 @@ from .forms import NoteForm
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
 from .serializers import NoteSerializer
+from rest_framework.permissions import IsAuthenticated
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Note.objects.filter(user=self.request.user)
 
 
 @login_required()
@@ -46,8 +56,3 @@ def delete_note(request, pk):
     note = Note.objects.filter(user=request.user).get(pk=pk)
     note.delete()
     return redirect('note_list')
-
-
-class NoteViewSet(viewsets.ModelViewSet):
-    queryset = Note.objects.all()
-    serializer_class = NoteSerializer
