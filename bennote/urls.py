@@ -18,11 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import home
 from users.views import login_view, signup_view
+from rest_framework.routers import DefaultRouter
+from notes.views import NoteViewSet
+
+router = DefaultRouter(trailing_slash=False)
+router.register('notes', NoteViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='Home'),
     path('notes/', include('notes.urls')),
     path('login/', login_view, name='login'),
-    path('signup/', signup_view, name='signup')
+    path('signup/', signup_view, name='signup'),
+    path('api/', include(router.urls)),
 ]

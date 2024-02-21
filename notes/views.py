@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Note
 from .forms import NoteForm
 from django.contrib.auth.decorators import login_required
+from rest_framework import viewsets
+from .serializers import NoteSerializer
 
 
 @login_required()
@@ -44,3 +46,8 @@ def delete_note(request, pk):
     note = Note.objects.filter(user=request.user).get(pk=pk)
     note.delete()
     return redirect('note_list')
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
