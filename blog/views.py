@@ -5,11 +5,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.text import slugify
 from django.views.decorators.http import require_POST
-
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .models import Post, Comment
+from rest_framework import viewsets
+from .serializers import PostSerializer, CommentSerializer
+from rest_framework.permissions import IsAuthenticated
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # function that handles the registration of a new user
