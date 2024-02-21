@@ -21,7 +21,7 @@ def register(request):
             form.save()
             # message from django to display a message to the user after the registration is successful
             messages.success(request, f'Account created for {form.cleaned_data['username']}!')
-    return render(request, 'users/register.html', {'form': form})
+    return render(request, 'users/login.html', {'form': form})
 
 
 # function that handles the login of a user
