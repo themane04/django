@@ -1,10 +1,14 @@
-from django.urls import path
-
+from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.routers import DefaultRouter
 from blog import views
 from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
-    edit_profile, like_post
+    edit_profile, like_post, PostViewSet
 from django.conf import settings
 from django.conf.urls.static import static
+
+router = DefaultRouter(trailing_slash=False)
+router.register('posts', PostViewSet)
 
 urlpatterns = [
                   path('', home, name='home'),
@@ -18,9 +22,12 @@ urlpatterns = [
                   path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
                   path('profile/', edit_profile, name='edit_profile'),
                   path('like/<int:post_id>', like_post, name='like_post'),
+                  path('api/', include(router.urls)),
+                  path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+                  path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
               ] + static(settings.MEDIA_URL,
                          document_root=settings.MEDIA_ROOT)  # This line is added for the purpose of serving media
-                                                                        # files during development
+# files during development
 
 # ensuring that the media files are served during development
 if settings.DEBUG:

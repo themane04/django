@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.text import slugify
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -12,6 +12,7 @@ from .models import Post, Comment
 from rest_framework import viewsets
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -19,8 +20,12 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Post.objects.all().order_by('-created_at')
+
 
 # function that handles the registration of a new user
+@csrf_exempt
 def register(request):
     form = UserRegisterForm()
     if request.method == 'POST':
@@ -29,10 +34,12 @@ def register(request):
             form.save()
             # message from django to display a message to the user after the registration is successful
             messages.success(request, f'Account created for {form.cleaned_data['username']}!')
-    return render(request, 'users/login.html', {'form': form})
+            return redirect('login')
+    return render(request, 'users/register.html', {'form': form})
 
 
 # function that handles the login of a user
+@csrf_exempt
 def user_login(request):
     context = {'error': None}
     if request.method == "POST":
@@ -52,6 +59,7 @@ def user_login(request):
 
 
 # function that handles the logout of a user
+@csrf_exempt
 def user_logout(request):
     request.session.flush()
     return redirect('home')
@@ -64,6 +72,7 @@ def home(request):
 
 
 # function that handles the profile page of a user
+@csrf_exempt
 @login_required
 def create_post(request):
     form = PostForm()
@@ -78,6 +87,7 @@ def create_post(request):
 
 
 # function that allows a user to delete a post
+@csrf_exempt
 @login_required
 def post_delete(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -88,7 +98,9 @@ def post_delete(request, post_id):
 
 
 # function that allows a user to edit a post
+@csrf_exempt
 @login_required
+# @require_http_methods(['PUT', 'PATCH'])
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     form = PostForm(instance=post)
