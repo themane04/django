@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST, require_http_methods
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import Post, Comment
+from .models import Post, Comment, Notification
 from rest_framework import viewsets
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -192,3 +192,21 @@ def edit_profile(request):
         'profile_form': profile_form,
     }
     return render(request, 'users/profile.html', context)
+
+
+def comment_create(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.method == "POST":
+        comment_content = request.POST.get('comment_content')
+        Comment.objects.create(post=post, author=request.user, content=comment_content)
+        if post.author != request.user:
+            Notification.objects.create(post=post, sender=request.user, receiver=post.author,
+                                        notification_type=Notification.COMMENT)
+        # Redirect or return a response
+
+
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('some_view_for_details')
