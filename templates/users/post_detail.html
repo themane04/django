@@ -88,7 +88,7 @@
                                 </h5>
                                 <p class="card-text">{{ comment.content }}</p>
                                 <!-- Delete Comment Button -->
-                                {% if user.is_authenticated and user == post.author %}
+                                {% if user.is_authenticated and user == comment.author or user == post.author %}
                                     <form action="{% url 'comment_delete' comment.id %}" method="post"
                                           style="display: inline;">
                                         {% csrf_token %}
@@ -111,7 +111,7 @@
                                 {% if field.label %}
                                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {% endif %}
-                                    {{ field|add_class:"form-control"|attr:"style:resize:none;" }}
+                                {{ field|add_class:"form-control"|attr:"style:resize:none;" }}
                                 {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                 {% endif %}

@@ -133,6 +133,16 @@ def post_detail(request, post_id):
                   {'post': post, 'comments': comments, 'comment_form': comment_form})
 
 
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user == comment.author:
+        comment.delete()
+        return redirect('post_detail', post_id=comment.post.id)
+    else:
+        return redirect('post_detail', post_id=comment.post.id)
+
+
 # function that allows a user to like a post
 @login_required
 @require_POST
@@ -154,7 +164,7 @@ def like_post(request, post_id):
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     post = comment.post
-    if request.user.is_authenticated and request.user == post.author:
+    if request.user == comment.author or request.user == post.author:
         comment.delete()
         messages.success(request, "Comment deleted successfully.")
         return redirect(reverse('post_detail', args=[post.id]))
