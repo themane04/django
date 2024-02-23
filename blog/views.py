@@ -95,6 +95,7 @@ def post_delete(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if post.author != request.user:
         return HttpResponse()
+    post.image.delete()
     post.delete()
     return redirect('home')
 
@@ -193,7 +194,13 @@ def edit_profile(request):
         'user_form': user_form,
         'profile_form': profile_form,
     }
-    return render(request, 'users/profile.html', context)
+    return render(request, 'users/profile_information.html', context)
+
+
+def user_profile(request):
+    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
+
+    return render(request, 'users/user_profile.html', {'user_posts': user_posts})
 
 
 def comment_create(request, post_id):

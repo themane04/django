@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+    <article class="container mt-5">
+        <header class="text-center mb-4">
+            <h1>{{ user.username }}'s Profile</h1>
+            <!-- Button to Edit Profile -->
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary mb-3">Edit Profile</a>
+        </header>
+
+        <section>
+            <h2 class="text-center mb-3">Your Posts</h2>
+            <div class="container">
+                <div class="row">
+                    {% for post in user_posts %}
+                        <div class="col-md-4 d-flex align-items-stretch">
+                            <div class="card mb-4" style="width: 100%;">
+                                <div class="card-body" style="background-color: #ADBC9F">
+                                    <h3 class="card-title">{{ post.title }}</h3>
+                                    <p class="card-text">{{ post.content | truncatewords:20 }}</p>
+                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">Go to post</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="card-body rounded-2" style="background-color: #ADBC9F">
+                            <p class="text-center fs-5 text-center">You have not created any posts yet.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </article>
+{% endblock %}
