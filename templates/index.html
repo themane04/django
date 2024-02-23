@@ -119,9 +119,16 @@
     // a function that handles the like button click event and sends an AJAX request to the server
     function handleLikeClick(e) {
         e.preventDefault();
+        e.stopPropagation();
         const postId = $(this).data('post-id');
         const likeCount = $(this).find('.like-count');
         const likeIcon = $(this).find('i');
+
+        const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+        if (!isAuthenticated) {
+            $('#loginAlertModal').modal('show');
+            return; // Prevent the AJAX call if not authenticated
+        }
 
         $.ajax({
             url: '{% url "like_post" 0 %}'.replace('0', postId),
@@ -139,10 +146,8 @@
                 likeCount.text(response.like_count);
             },
             error: function (response) {
-                // Check for a 403 Forbidden status code
                 if (response.status === 403) {
-                    // Show a popup message instead of redirecting
-                    alert('You must be logged in to like a post. Please log in or create an account.');
+                    $('#loginAlertModal').modal('show');
                 }
             }
         });
@@ -153,7 +158,11 @@
     const debouncedLikeClick = debounce(handleLikeClick, 250);
 
     // Attached the debounced click event to the like button
-    $('.like-button').off('click').on('click', debouncedLikeClick);
+    $(document).ready(function () {
+        $('.like-button').off('click').on('click', function (event) {
+            handleLikeClick.call(this, event);
+        });
+    });
 
 
     // function that adjusts the input field height to match the content

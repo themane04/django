@@ -50,13 +50,16 @@ def user_login(request):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            user = None
             context['error'] = 'Invalid email or password.'
+            return render(request, 'users/login.html', context)
+
+        user = authenticate(username=user.username, password=password)
         if user is not None:
-            user = authenticate(username=user.username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
+            login(request, user)
+            return redirect('home')
+        else:
+            context['error'] = 'Invalid email or password.'
+
     return render(request, 'users/login.html', context)
 
 
@@ -155,12 +158,8 @@ def delete_comment(request, comment_id):
 @require_POST
 def like_post(request, post_id):
     if not request.user.is_authenticated:
-        if request.is_ajax():
-            # Return a 403 Forbidden response for AJAX requests
-            return HttpResponseForbidden('You must be logged in to like a post.')
-        else:
-            # Redirect to login page for non-AJAX requests
-            return redirect('login')
+        # Return a 403 Forbidden response for unauthenticated users
+        return JsonResponse({'error': 'You must be logged in to like a post.'}, status=403)
 
     post = get_object_or_404(Post, id=post_id)
     liked = not post.likes.filter(id=request.user.id).exists()
