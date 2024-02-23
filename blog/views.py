@@ -239,3 +239,33 @@ def notifications_all(request):
 def clear_all_notifications(request):
     request.user.received_notifications.all().delete()
     return redirect('notifications_all')
+
+
+@login_required
+@require_POST
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+    liked = False
+    # Assuming 'likes' is a ManyToManyField relating User and Post models
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+        like_count = post.likes.count()
+    else:
+        post.likes.add(user)
+        liked = True
+        like_count = post.likes.count()
+        # Create a notification if the liker is not the post's author
+        if user != post.author:
+            Notification.objects.create(
+                post=post,
+                sender=user,
+                receiver=post.author,
+                notification_type=Notification.LIKE,
+                is_read=False
+            )
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': like_count,
+    })

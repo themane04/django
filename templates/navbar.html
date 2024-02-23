@@ -82,7 +82,11 @@
                                                     {% endif %}
                                                 </div>
                                                 <div>
-                                                    {{ notification.sender.username }} commented on your post.
+                                                    {% if notification.notification_type == 'comment' %}
+                                                        {{ notification.sender.username }} commented on your post.
+                                                    {% elif notification.notification_type == 'like' %}
+                                                        {{ notification.sender.username }} liked your post.
+                                                    {% endif %}
                                                     <div class="small text-gray-500">{{ notification.created_at|date:"N j, Y, H:i" }}</div>
                                                 </div>
                                             </a>
