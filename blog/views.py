@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -205,8 +207,35 @@ def comment_create(request, post_id):
         # Redirect or return a response
 
 
+@receiver(post_save, sender=Comment)
+def create_notification(sender, instance, created, **kwargs):
+    if created and instance.author != instance.post.author:
+        Notification.objects.create(
+            post=instance.post,
+            sender=instance.author,
+            receiver=instance.post.author,
+            notification_type=Notification.COMMENT,
+            is_read=False
+        )
+
+
 def mark_notification_read(request, notification_id):
     notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
     notification.is_read = True
     notification.save()
-    return redirect('some_view_for_details')
+    return redirect('post_detail', post_id=notification.post.id)
+
+
+def notifications_all(request):
+    notifications = Notification.objects.filter(receiver=request.user).order_by('-created_at')
+    unread_count = notifications.filter(is_read=False).count()
+    return render(request, 'users/user_notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+
+@login_required
+def clear_all_notifications(request):
+    request.user.received_notifications.all().delete()
+    return redirect('notifications_all')

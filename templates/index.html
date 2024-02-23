@@ -58,6 +58,12 @@
         background-color: #ADBC9F;
     }
 
+    .non-selectable {
+        pointer-events: none;
+        color: gray;
+    }
+
+
 </style>
 <script>
     // function that adjusts the padding-right of the body to account for the scrollbar width
@@ -73,38 +79,6 @@
 
     // Implemented an AJAX call using jQuery to allow users to like a blog post without refreshing the page, and to prompt
     // unauthenticated users to log in if they attempt to like a post.
-    $(document).ready(function () {
-        $('.like-button').click(function (e) {
-            e.preventDefault();
-            const postId = $(this).data('post-id');
-            const likeCount = $(this).find('.like-count');
-            const likeIcon = $(this).find('i');
-
-            $.ajax({
-                url: '{% url "like_post" 0 %}'.replace('0', postId),
-                method: 'POST',
-                data: {
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    post_id: postId,
-                },
-                success: function (response) {
-                    if (response.liked) {
-                        likeIcon.removeClass('far').addClass('fas').css('color', 'red');
-                    } else {
-                        likeIcon.removeClass('fas').addClass('far').css('color', '');
-                    }
-                    likeCount.text(response.like_count);
-                },
-                error: function (response) {
-                    // Handle error, e.g., unauthenticated user
-                    if (response.status === 403) {
-                        // Show popup for unauthenticated user
-                        alert('Please register or log in to like posts.');
-                    }
-                }
-            });
-        });
-    });
 
     function getCookie(name) {
         let cookieValue = null;

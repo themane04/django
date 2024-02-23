@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from blog import views
 from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
-    edit_profile, like_post, PostViewSet
+    edit_profile, like_post, PostViewSet, mark_notification_read, notifications_all, clear_all_notifications
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,9 +25,10 @@ urlpatterns = [
                   path('api/', include(router.urls)),
                   path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
                   path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-                  path('notification/<int:notification_id>/read/', views.mark_notification_read,
+                  path('notification/<int:notification_id>/read/', mark_notification_read,
                        name='mark_notification_read'),
-
+                  path('notifications/', notifications_all, name='notifications_all'),
+                  path('clear-notifications/', clear_all_notifications, name='clear_notifications'),
               ] + static(settings.MEDIA_URL,
                          document_root=settings.MEDIA_ROOT)  # This line is added for the purpose of serving media
 # files during development

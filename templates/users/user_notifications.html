@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <div class="container mt-5 te">
+        <h1 class="text-center mb-3">All Notifications</h1>
+        <a href="{% url 'clear_notifications' %}" class="btn btn-danger mb-3" aria-label="Clear all notifications">
+            <i class="fas fa-trash-alt"></i> Clear All
+        </a>
+        <div class="list-group" style="background-color: #FBFADA">
+            {% for notification in notifications %}
+                <a class="dropdown-item d-flex align-items-center"
+                   href="{% url 'mark_notification_read' notification.id %}">
+                    <div class="me-3">
+                        {% if notification.sender.profile.profile_pic %}
+                            <img src="{{ notification.sender.profile.profile_pic.url }}" class="rounded-circle"
+                                 alt="Profile Picture" style="width: 50px; height: 50px;">
+                        {% else %}
+                            <div class="icon-circle bg-primary">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {{ notification.sender.username }} commented on your post.
+                        <div class="small text-gray-500">{{ notification.created_at|date:"N j, Y, H:i" }}</div>
+                    </div>
+                </a>
+            {% empty %}
+                <span class="dropdown-item">No new notifications</span>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
