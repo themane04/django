@@ -77,6 +77,16 @@
         }
     }
 
+    // function that debounces the execution of a function
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
     // Implemented an AJAX call using jQuery to allow users to like a blog post without refreshing the page, and to prompt
     // unauthenticated users to log in if they attempt to like a post.
 
@@ -105,7 +115,9 @@
         }
     });
 
-    $('.like-button').click(function (e) {
+
+    // a function that handles the like button click event and sends an AJAX request to the server
+    function handleLikeClick(e) {
         e.preventDefault();
         const postId = $(this).data('post-id');
         const likeCount = $(this).find('.like-count');
@@ -132,7 +144,14 @@
                 }
             }
         });
-    });
+    }
+
+    // Debounce the like button click event to prevent spam clicking
+    const debouncedLikeClick = debounce(handleLikeClick, 250);
+
+    // Attached the debounced click event to the like button
+    $('.like-button').off('click').on('click', debouncedLikeClick);
+
 
     // function that adjusts the input field height to match the content
     $(document).ready(function () {

@@ -247,16 +247,24 @@ def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     user = request.user
     liked = False
-    # Assuming 'likes' is a ManyToManyField relating User and Post models
     if post.likes.filter(id=user.id).exists():
         post.likes.remove(user)
-        like_count = post.likes.count()
+        liked = False
     else:
         post.likes.add(user)
         liked = True
-        like_count = post.likes.count()
-        # Create a notification if the liker is not the post's author
-        if user != post.author:
+
+    like_count = post.likes.count()
+
+    if liked and user != post.author:
+        notification_exists = Notification.objects.filter(
+            sender=user,
+            receiver=post.author,
+            post=post,
+            notification_type=Notification.LIKE,
+        ).exists()
+
+        if not notification_exists:
             Notification.objects.create(
                 post=post,
                 sender=user,
