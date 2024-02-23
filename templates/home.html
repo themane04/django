@@ -50,8 +50,10 @@
 
                             <div class="d-flex justify-content-between">
                                 <div style="display: flex; align-items: center;">
-                                    <a style="font-size: 1.3rem; text-decoration: none; color: black" class="like-button"
-                                       data-post-id="{{ post.id }}">
+                                    <a style="font-size: 1.3rem; text-decoration: none; color: black"
+                                       class="like-button"
+                                       data-post-id="{{ post.id }}"
+                                       onclick="handleLikeClick.call(this, event)">
                                         {% if user in post.likes.all %}
                                             <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
                                         {% else %}

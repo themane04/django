@@ -152,15 +152,23 @@ def delete_comment(request, comment_id):
 
 
 # function that allows a user to like a post
-@login_required
 @require_POST
 def like_post(request, post_id):
+    if not request.user.is_authenticated:
+        if request.is_ajax():
+            # Return a 403 Forbidden response for AJAX requests
+            return HttpResponseForbidden('You must be logged in to like a post.')
+        else:
+            # Redirect to login page for non-AJAX requests
+            return redirect('login')
+
     post = get_object_or_404(Post, id=post_id)
     liked = not post.likes.filter(id=request.user.id).exists()
     if liked:
         post.likes.add(request.user)
     else:
         post.likes.remove(request.user)
+
     return JsonResponse({
         'liked': liked,
         'like_count': post.likes.count()
