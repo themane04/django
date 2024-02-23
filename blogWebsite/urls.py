@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from blog import views
 from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
     edit_profile, like_post, PostViewSet, mark_notification_read, notifications_all, clear_all_notifications, \
-    user_profile
+    user_profile, is_loggedin
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -31,6 +31,7 @@ urlpatterns = [
                        name='mark_notification_read'),
                   path('notifications/', notifications_all, name='notifications_all'),
                   path('clear-notifications/', clear_all_notifications, name='clear_notifications'),
+                  path('is-loggedin/', is_loggedin, name='is_loggedin')
               ] + static(settings.MEDIA_URL,
                          document_root=settings.MEDIA_ROOT)  # This line is added for the purpose of serving media
 # files during development

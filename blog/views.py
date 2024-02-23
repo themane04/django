@@ -60,6 +60,11 @@ def user_login(request):
     return render(request, 'users/login.html', context)
 
 
+def is_loggedin(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+
 # function that handles the logout of a user
 @csrf_exempt
 def user_logout(request):

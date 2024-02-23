@@ -124,23 +124,46 @@
         const likeIcon = $(this).find('i');
 
         $.ajax({
-            url: '{% url "like_post" 0 %}'.replace('0', postId),
-            method: 'POST',
-            data: {
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                post_id: postId,
-            },
+            //check if the user is logged in before sending the like request
+            url: '{% url "is_loggedin" %}',
+            method: 'GET',
             success: function (response) {
-                if (response.liked) {
-                    likeIcon.removeClass('far').addClass('fas').css('color', 'red');
-                } else {
-                    likeIcon.removeClass('fas').addClass('far').css('color', '');
-                }
-                likeCount.text(response.like_count);
-            },
-            error: function (response) {
                 if (response.status === 403 || response.status === 302) {
-                    $('#loginModal').modal('show');
+                    window.location.href = '/login/';
+
+                } else {
+                    $.ajax({
+                        url: '{% url "like_post" 0 %}'.replace('0', postId),
+                        method: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                            post_id: postId,
+                        },
+                        success: function (response) {
+                            if (response.liked) {
+                                likeIcon.removeClass('far').addClass('fas').css('color', 'red');
+                            } else {
+                                likeIcon.removeClass('fas').addClass('far').css('color', '');
+                            }
+                            likeCount.text(response.like_count);
+                        },
+                        error: function (response) {
+                            if (response.status === 403 || response.status === 302) {
+                                $.ajax({
+                                    url: '{% url "is_loggedin" %}',
+                                    method: 'GET',
+                                    success: function (response) {
+                                        if (response.logged_in) {
+                                            alert('You must be logged in to like a post.');
+                                        } else {
+                                            alert('You must be logged in to like a post.');
+                                            window.location.href = '{% url "login" %}';
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             }
         });
