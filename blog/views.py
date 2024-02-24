@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -148,6 +150,8 @@ def post_detail(request, post_id):
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.user == comment.author:
+        if comment.image:
+            comment.image.delete()
         comment.delete()
         return redirect('post_detail', post_id=comment.post.id)
     else:
@@ -172,19 +176,6 @@ def like_post(request, post_id):
         'liked': liked,
         'like_count': post.likes.count()
     })
-
-
-# function that allows a user to delete a comment
-@login_required
-def comment_delete(request, comment_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
-    post = comment.post
-    if request.user == comment.author or request.user == post.author:
-        comment.delete()
-        messages.success(request, "Comment deleted successfully.")
-        return redirect(reverse('post_detail', args=[post.id]))
-    else:
-        return HttpResponseForbidden()
 
 
 # function that allows a user to edit his profile information
@@ -215,15 +206,34 @@ def user_profile(request):
     return render(request, 'users/user_profile.html', {'user_posts': user_posts})
 
 
+@login_required
 def comment_create(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.method == "POST":
-        comment_content = request.POST.get('comment_content')
-        Comment.objects.create(post=post, author=request.user, content=comment_content)
-        if post.author != request.user:
-            Notification.objects.create(post=post, sender=request.user, receiver=post.author,
-                                        notification_type=Notification.COMMENT)
-        # Redirect or return a response
+        form = CommentForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.post = post
+            new_comment.author = request.user
+            new_comment.image = form.cleaned_data.get('image')
+            new_comment.save()
+
+            # Notification logic
+            if post.author != request.user:
+                Notification.objects.create(post=post, sender=request.user, receiver=post.author,
+                                            notification_type=Notification.COMMENT)
+
+            # Redirect to the same page to display the new comment, or wherever appropriate
+            return redirect(post.get_absolute_url())  # Assuming your Post model has a get_absolute_url method
+        else:
+            # If the form is not valid, render the form with error messages (or handle as needed)
+            return render(request, 'users/post_detail.html', {'form': form, 'post': post})
+    else:
+        form = CommentForm()  # An unbound form
+
+    # If GET request, you might want to show an empty form or redirect
+    # Adjust the 'your_template.html' and context as needed
+    return render(request, 'users/post_detail.html', {'form': form, 'post': post})
 
 
 @receiver(post_save, sender=Comment)

@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from blog import views
 from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
     edit_profile, like_post, PostViewSet, mark_notification_read, notifications_all, clear_all_notifications, \
-    user_profile, is_loggedin
+    user_profile, is_loggedin, delete_comment, comment_create
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -20,7 +20,8 @@ urlpatterns = [
                   path('post/delete/<int:post_id>', post_delete, name='post-delete'),
                   path('post/edit/<int:post_id>', edit_post, name='edit-post'),
                   path('post/<int:post_id>', post_detail, name='post_detail'),
-                  path('comment/<int:comment_id>/delete/', views.comment_delete, name='comment_delete'),
+                  path('comment/<int:comment_id>/delete/', delete_comment, name='comment_delete'),
+                  path('post/<int:post_id>/comment/create/', comment_create, name='comment_create'),
                   path('profile/', edit_profile, name='edit_profile'),
                   path('view-profile/', user_profile, name='user_profile'),
                   path('like/<int:post_id>', like_post, name='like_post'),
