@@ -161,7 +161,8 @@ REST_FRAMEWORK = {
     )
 }
 
-# Damit das Token mehr als 5 Minuten dauert
+# Token validation more than 5 minutes
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
+

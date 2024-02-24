@@ -6,8 +6,6 @@ from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.utils.text import slugify
 from django.views.decorators.http import require_POST, require_http_methods
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
@@ -31,14 +29,15 @@ class PostViewSet(viewsets.ModelViewSet):
 # function that handles the registration of a new user
 @csrf_exempt
 def register(request):
-    form = UserRegisterForm()
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            # message from django to display a message to the user after the registration is successful
-            messages.success(request, f'Account created for {form.cleaned_data['username']}!')
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect('login')
+    else:
+        form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
 
