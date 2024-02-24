@@ -130,7 +130,7 @@ def edit_post(request, post_id):
 # function that allows a user to view and comment a post
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comments = post.comments.all()  # Model has a related_name='comments' in the ForeignKey of Comment model
+    comments = post.comments.all().order_by('-created_at')
     new_comment = None
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
@@ -147,9 +147,9 @@ def post_detail(request, post_id):
 
 
 @login_required
-def delete_comment(request, comment_id):
+def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    if request.user == comment.author:
+    if request.user == comment.author or request.user == comment.post.author:
         if comment.image:
             comment.image.delete()
         comment.delete()
@@ -207,7 +207,7 @@ def user_profile(request):
 
 
 @login_required
-def comment_create(request, post_id):
+def create_comment(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.method == "POST":
         form = CommentForm(request.POST, request.FILES)

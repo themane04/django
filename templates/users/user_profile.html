@@ -19,7 +19,7 @@
                                 <div class="card-body" style="background-color: #ADBC9F">
                                     <h3 class="card-title">{{ post.title }}</h3>
                                     <p class="card-text">{{ post.content | truncatewords:20 }}</p>
-                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">Go to post</a>
+                                    <a href="{% url 'post-detail' post.id %}" class="btn btn-primary">Go to post</a>
                                 </div>
                             </div>
                         </div>

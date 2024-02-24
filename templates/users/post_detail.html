@@ -2,10 +2,9 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-    <!-- post_detail.html -->
     <div class="container mt-5">
         <div class="row">
-            <div class="col-lg-8 mx-auto" style="background-color: #FBFBBB; border-radius: 5px">
+            <div class="col-lg-8 mx-auto" style="background-color: #FBFBBB; border-radius: 5px; padding-bottom: 1%">
                 <!-- Post Title -->
                 <h2 class="mb-3 text-center" style="font-weight: bold; color: #12372A;">{{ post.title }}</h2>
                 <!-- Divider -->
@@ -52,7 +51,7 @@
                     </div>
                 {% endif %}
 
-                <a style="font-size: 1.3rem; text-decoration: none; color: black" class="like-button"
+                <a style="font-size: 1.3rem; text-decoration: none; color: black;" class="like-button"
                    data-post-id="{{ post.id }}">
                     {% if user in post.likes.all %}
                         <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
@@ -68,37 +67,37 @@
     <!-- Display existing comments -->
     <div class="container mt-5">
         <div class="row">
+            <div class="text-center">
+                <h3 class="pb-2">Leave a Comment</h3>
+            </div>
             <div class="col-md-8 mx-auto">
 
                 <!-- Comment Form -->
                 {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'comment_create' post_id=post.id %}" class="mb-3"
+                    <form method="post" action="{% url 'comment-create' post_id=post.id %}" class="mb-3"
                           enctype="multipart/form-data">
                         {% csrf_token %}
                         {% for field in comment_form %}
-                            <div class="form-group">
-                                {% if field.label %}
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {% endif %}
-                                <!-- Check if the field is a file field to apply a different class -->
-                                {% if field|widget_type == 'FileInput' %}
-                                    {{ field|add_class:"form-control-file" }}
-                                {% else %}
-                                    {{ field|add_class:"form-control"|attr:"style:resize:none;" }}
-                                {% endif %}
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                {% endif %}
-                                {% if field.errors %}
+                            {% if field|widget_type == 'FileInput' %}
+                                <div class="custom-file mb-3">
+                                    {{ field|add_class:"custom-file-input" }}
                                     {% for error in field.errors %}
-                                        <div class="invalid-feedback">
-                                            {{ error }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% else %}
+                                <div class="form-group mb-3">
+                                    {{ field|add_class:"form-control" }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         {% endfor %}
-                        <div class="d-flex justify-content-center">
+                        <div class="text-center">
                             <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
                         </div>
                     </form>
@@ -108,8 +107,9 @@
                         comments.</p>
                 {% endif %}
 
+
                 <!-- Comments Heading -->
-                <h3><span style="margin-right: 0.3rem">{{ post.comments.count }}</span>Comments</h3>
+                <h3 class="text-center mt-5"><span style="margin-right: 0.3rem">{{ post.comments.count }}</span>Comments</h3>
                 <div class="mb-3">
                     {% for comment in comments %}
                         <div class="card mb-2" style="background-color: #FBFADA">
@@ -136,7 +136,7 @@
                                 </div>
                                 <!-- Delete Comment Button -->
                                 {% if user.is_authenticated and user == comment.author or user == post.author %}
-                                    <form action="{% url 'comment_delete' comment.id %}" method="post"
+                                    <form action="{% url 'comment-delete' comment.id %}" method="post"
                                           style="display: inline;">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger btn-sm" title="Delete Comment">

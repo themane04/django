@@ -185,6 +185,18 @@
         });
     });
 
+    document.addEventListener("DOMContentLoaded", function () {
+        var fileInputs = document.querySelectorAll('.form-control-file');
+
+        fileInputs.forEach(function (fileInput) {
+            var fileLabel = fileInput.nextElementSibling; // Assumes the label immediately follows the input
+            fileInput.addEventListener('change', function () {
+                var fileName = fileInput.value.split('\\').pop();
+                fileLabel.textContent = fileName ? fileName : "Choose file";
+            });
+        });
+    });
+
 </script>
 </body>
 </html>

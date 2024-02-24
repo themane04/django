@@ -84,7 +84,7 @@
                                         <span class="like-count">{{ post.likes.count }}</span>
                                     </a>
                                     <!-- Comment button -->
-                                    <a href="{% url 'post_detail' post.id %}" class="btn btn-info btn-sm"
+                                    <a href="{% url 'post-detail' post.id %}" class="btn btn-info btn-sm"
                                        style="margin-left: 1rem;">
                                         <i class="fa fa-comments" aria-hidden="true"></i>
                                         <span style="margin-left: 0.6rem">{{ post.comments.count }}</span>
