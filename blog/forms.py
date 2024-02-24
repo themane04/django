@@ -23,7 +23,7 @@ class UserRegisterForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exclude(id=self.instance.id).exists():
             raise ValidationError("A user with that username already exists.")
         return username
 
@@ -59,3 +59,9 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email']
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).exclude(id=self.instance.id).exists():
+            raise ValidationError("A user with that username already exists.")
+        return username

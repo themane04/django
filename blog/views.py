@@ -15,6 +15,7 @@ from rest_framework import viewsets
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import login as auth_login
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -187,6 +188,10 @@ def edit_profile(request):
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile has been updated!')
+
+            updated_user = authenticate(username=user_form.cleaned_data['username'], password=request.user.password)
+            if updated_user:
+                auth_login(request, updated_user)
             return redirect('edit_profile')
     else:
         user_form = UserUpdateForm(instance=request.user)
@@ -201,7 +206,6 @@ def edit_profile(request):
 
 def user_profile(request):
     user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
-
     return render(request, 'users/user_profile.html', {'user_posts': user_posts})
 
 

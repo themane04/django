@@ -14,7 +14,8 @@
                     {% csrf_token %}
                     <div style="display: flex; justify-content: center;">
                         {% if user.profile.profile_pic %}
-                            <img src="{{ user.profile.profile_pic.url }}" style="height: 150px; width: 150px" alt="Profile picture">
+                            <img src="{{ user.profile.profile_pic.url }}" style="height: 150px; width: 150px"
+                                 alt="Profile picture">
                         {% else %}
                             <img src="{% static 'images/default_profile_picture.png' %}" alt="Default profile picture">
                         {% endif %}
@@ -27,11 +28,20 @@
 
                     <div class="mb-3">
                         <label for="usernameInput" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="usernameInput" name="username"
-                               placeholder="Username" value="{{ user_form.username.value }}" required>
-                        <div class="invalid-feedback">
-                            Please choose a username.
-                        </div>
+                        <input type="text" class="form-control {% if user_form.username.errors %}is-invalid{% endif %}"
+                               id="usernameInput" name="username" placeholder="Username"
+                               value="{{ user_form.username.value }}" required>
+                        {% if user_form.username.errors %}
+                            {% for error in user_form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="invalid-feedback">
+                                Please choose a username.
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div class="mb-3">
@@ -48,6 +58,7 @@
                         <textarea class="form-control" id="bioInput" name="bio"
                                   rows="3">{{ profile_form.bio.value }}</textarea>
                     </div>
+                
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                 </form>
             </div>
