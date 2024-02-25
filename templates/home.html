@@ -176,10 +176,9 @@
                             </div>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if post.updated_at %}
-                                Last updated on {{ post.updated_at|date:"N j, Y, H:i" }}
-                            {% else %}
-                                Created on {{ post.created_at|date:"N j, Y, H:i" }}
+                            Created on {{ post.created_at|date:"N j, Y, H:i" }}
+                            {% if post.updated_at != post.created_at %}
+                                | Last updated on {{ post.updated_at|date:"N j, Y, H:i" }}
                             {% endif %}
                         </div>
                     </div>

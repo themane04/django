@@ -173,7 +173,10 @@ class EditPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        if 'remove_image' in self.request.POST:
+            self.object = form.save(commit=False)
+            self.object.image.delete()
+            self.object.image = None
         return super().form_valid(form)
 
     def test_func(self):
