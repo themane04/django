@@ -73,8 +73,7 @@
                                                 <div class="me-3">
                                                     {% if notification.sender.profile.profile_pic %}
                                                         <img src="{{ notification.sender.profile.profile_pic.url }}"
-                                                             class="rounded-circle" alt="Profile Picture"
-                                                             style="width: 50px; height: 50px;">
+                                                             class="rounded-circle" alt="Profile Picture">
                                                     {% else %}
                                                         <div class="icon-circle bg-primary">
                                                             <i class="fas fa-user text-white"></i>
@@ -109,12 +108,10 @@
                         <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" title="{{ user.username }}">
                             {% if user.profile.profile_pic %}
-                                <img class="rounded-circle" src="{{ user.profile.profile_pic.url }}" alt="Profile Image"
-                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 20%; margin-right: 10px;">
+                                <img class="rounded-circle" src="{{ user.profile.profile_pic.url }}" alt="Profile Image">
                             {% else %}
-                                <img src="{% static '/images/default_profile_picture.png' %}"
-                                     alt="Default Profile Image"
-                                     style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">
+                                <img class="rounded-circle" src="{% static '/images/default_profile_picture.png' %}"
+                                     alt="Default Profile Image">
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

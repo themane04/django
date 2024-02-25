@@ -23,6 +23,8 @@ class UserRegisterForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
+        if len(username) > 20 or len(username) < 5:
+            raise ValidationError("Username must be between 5 and 20 characters.")
         if User.objects.filter(username=username).exclude(id=self.instance.id).exists():
             raise ValidationError("A user with that username already exists.")
         return username
@@ -62,6 +64,8 @@ class UserUpdateForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
+        if len(username) > 15 or len(username) < 2:
+            raise ValidationError("Username must be between 2 and 15 characters.")
         if User.objects.filter(username=username).exclude(id=self.instance.id).exists():
             raise ValidationError("A user with that username already exists.")
         return username

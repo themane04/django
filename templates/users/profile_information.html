@@ -7,6 +7,13 @@
         Profile Settings
     </h1>
     <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <div class="card" style="background-color: #FBFADA">
             <div class="card-body">
                 <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data"
@@ -16,12 +23,12 @@
                         {% if user.profile.profile_pic %}
                             <img src="{{ user.profile.profile_pic.url }}"
                                  class="rounded-circle"
-                                 style="width: 150px; height: 150px; object-fit: cover;"
-                                 alt="Profile picture">
+                                 alt="Profile picture"
+                                 style="width: 200px; height: 200px">
                         {% else %}
                             <img src="{% static 'images/default_profile_picture.png' %}"
                                  class="rounded-circle"
-                                 style="width: 150px; height: 150px; object-fit: cover;"
+                                 style="width: 200px; height: 200px;"
                                  alt="Default profile picture">
                         {% endif %}
                     </div>
@@ -69,4 +76,11 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('.alert-dismissible .close').on('click', function () {
+                $(this).parent().alert('close');
+            });
+        });
+    </script>
 {% endblock %}

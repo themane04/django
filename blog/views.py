@@ -54,13 +54,12 @@ def user_public_profile(request, username):
     return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
 
 
-
 # function that marks a notification as read
 def mark_notification_read(request, notification_id):
     notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
     notification.is_read = True
     notification.save()
-    return redirect('post_detail', post_id=notification.post.id)
+    return redirect('post-detail', post_id=notification.post.id)
 
 
 # function that clears all notifications
@@ -207,7 +206,7 @@ class PostDetailView(DetailView):
             new_comment.post = post
             new_comment.author = request.user
             new_comment.save()
-            return redirect('post_detail', post_id=post.id)
+            return redirect('post-detail', post_id=post.id)
         return self.get(request, *args, **kwargs)
 
 
@@ -219,7 +218,7 @@ class CommentDeleteView(LoginRequiredMixin, View):
             if hasattr(comment, 'image') and comment.image:
                 comment.image.delete()
             comment.delete()
-            return redirect('post_detail', post_id=comment.post.id)
+            return redirect('post-detail', post_id=comment.post.id)
         else:
             return HttpResponseForbidden('You do not have permission to delete this comment.')
 
@@ -237,16 +236,24 @@ class EditProfileView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, 'Your profile has been updated!')
 
-            # Re-authenticate the user to update session information if necessary
-            updated_user = authenticate(username=user_form.cleaned_data['username'], password=request.user.password)
-            if updated_user:
-                auth_login(request, updated_user)
-            return redirect('edit_profile')
+        if user_form.is_valid() and profile_form.is_valid():
+            # Check if there are changes in the forms
+            user_changed = user_form.has_changed()
+            profile_changed = profile_form.has_changed()
+
+            if user_changed or profile_changed:
+                user_form.save()
+                profile_form.save()
+                messages.success(request, 'Your profile has been updated!')
+
+                # Optionally re-authenticate or update the session, if needed
+                # This section may need adjustment as per your authentication flow
+
+                return redirect('edit_profile')
+            else:
+                messages.info(request, 'No changes were made to your profile.')
+
         return render(request, 'users/profile_information.html', {
             'user_form': user_form,
             'profile_form': profile_form,

@@ -19,7 +19,7 @@ class Post(models.Model):
 
     # This method helped to post comments with images
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'post_id': self.pk})
+        return reverse('post-detail', kwargs={'post_id': self.pk})
 
 
 # A model for the comments that will be created by the users
