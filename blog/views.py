@@ -139,7 +139,7 @@ class UserLoginView(View):
 class CreatePostView(View):
     def get(self, request, *args, **kwargs):
         form = PostForm()
-        return render(request, 'users/create_post.html', {'form': form})
+        return render(request, 'home.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = PostForm(request.POST, request.FILES)
@@ -148,7 +148,7 @@ class CreatePostView(View):
             post.author = request.user
             post.save()
             return redirect('home')
-        return render(request, 'users/create_post.html', {'form': form})
+        return render(request, 'home.html', {'form': form})
 
 
 # class that allows a user to delete a post

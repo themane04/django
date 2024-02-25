@@ -17,10 +17,11 @@
                     {% endif %}
                     <div style="padding-left: 2%; max-width: 40%">
                         <h1 class="mb-0">{{ profile_user.username }}</h1>
-                        <p class="text-center pt-2">{{ profile_user.profile.bio }}</p>
                     </div>
                 </div>
-
+                <div class="text-center d-flex justify-content-center">
+                    <p class="pb-5" style="max-width: 50%;">{{ profile_user.profile.bio }}</p>
+                </div>
                 {% for post in posts %}
                     <div class="card mb-3">
                         <div class="card-header">

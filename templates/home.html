@@ -24,6 +24,39 @@
             </div>
         </div>
     </div>
+
+    {% if user.is_authenticated %}
+        <div class="body-create-post">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="form-create-post">
+                            <h1 class="text-center">Create New Post</h1>
+                            <form method="post" class="m-3" action="{% url 'create-post' %}"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group mt-2">
+                                    <input type="text" class="form-control" id="title" name="title"
+                                           placeholder="Enter title" required>
+                                </div>
+                                <div class="form-group mt-2">
+                                <textarea class="form-control" id="content" name="content" rows="5"
+                                          placeholder="What is on your mind..." required></textarea>
+                                </div>
+                                <div class="form-group mt-2">
+                                    <input type="file" class="form-control" id="image" name="image">
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button type="submit" class="btn btn-primary">Publish</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="container mt-5">
         <h1 class="text-center mb-4">Recent Posts</h1>
         {% if posts %}
@@ -38,12 +71,14 @@
                                         <img class="rounded-circle" src="{{ post.author.profile.profile_pic.url }}"
                                              alt="{{ post.author.username }}">
                                     {% else %}
-                                        <img class="rounded-circle" src="{% static 'images/default_profile_picture.png' %}"
+                                        <img class="rounded-circle"
+                                             src="{% static 'images/default_profile_picture.png' %}"
                                              alt="Default profile picture">
                                     {% endif %}
-                                    {{ post.author.username }}
+                                    <div class="d-inline" style="padding-left: 1%">
+                                        {{ post.author.username }}
+                                    </div>
                                 </a>
-                                on {{ post.created_at|date:"N j, Y, H:i" }}
                             </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
                             <p class="card-text">{{ post.content }}</p>
