@@ -1,9 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from blog.views import RegisterView, home, UserLoginView, user_logout, CreatePostView, PostDeleteView, EditPostView, \
-    PostDetailView, \
-    EditProfileView, LikePostView, PostViewSet, mark_notification_read, NotificationsAllView, clear_all_notifications, \
-    user_profile, is_loggedin, CommentDeleteView, CreateCommentView
+    PostDetailView, EditProfileView, LikePostView, PostViewSet, mark_notification_read, NotificationsAllView, \
+    clear_all_notifications, user_profile, is_loggedin, CommentDeleteView, CreateCommentView, user_public_profile
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -21,6 +20,7 @@ urlpatterns = [
                        name='mark_notification_read'),
                   path('clear-notifications/', clear_all_notifications, name='clear_notifications'),
                   path('is-loggedin/', is_loggedin, name='is_loggedin'),
+                  path('profile/<str:username>/', user_public_profile, name='user_public_profile'),
                   path('register/', RegisterView.as_view(), name='register'),
                   path('login/', UserLoginView.as_view(), name='login'),
                   path('post/new', CreatePostView.as_view(), name='create-post'),

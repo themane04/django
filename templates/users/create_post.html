@@ -9,17 +9,14 @@
                         <form method="post" class="m-3" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-group mt-2">
-                                <label for="title">Title</label>
                                 <input type="text" class="form-control" id="title" name="title"
                                        placeholder="Enter title" required>
                             </div>
                             <div class="form-group mt-2">
-                                <label for="content">Content</label>
                                 <textarea class="form-control" id="content" name="content" rows="5"
                                           placeholder="What is on your mind..." required></textarea>
                             </div>
                             <div class="form-group mt-2">
-                                <label for="image">Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
                             </div>
                             <div class="text-center mt-2">

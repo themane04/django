@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST, require_http_methods
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import Post, Comment, Notification
+from .models import Post, Comment, Notification, Profile
 from rest_framework import viewsets
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -45,6 +45,14 @@ def home(request):
 def user_profile(request):
     user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
     return render(request, 'users/user_profile.html', {'user_posts': user_posts})
+
+
+# function that handles the public profile page of a user
+def user_public_profile(request, username):
+    user_profile = get_object_or_404(Profile, user__username=username)
+    posts = Post.objects.filter(author=user_profile.user)
+    return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
+
 
 
 # function that marks a notification as read

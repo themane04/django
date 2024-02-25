@@ -1,0 +1,82 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="d-flex align-items-center mb-4 justify-content-center">
+                    {% if profile_user.profile.profile_pic %}
+                        <img src="{{ profile_user.profile.profile_pic.url }}" class="rounded-circle mr-3"
+                             alt="{{ profile_user.username }}'s Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'default_profile_pic.png' %}" class="rounded-circle mr-3"
+                             alt="Default Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% endif %}
+                    <div style="padding-left: 2%; max-width: 40%">
+                        <h1 class="mb-0">{{ profile_user.username }}</h1>
+                        <p class="text-center pt-2">{{ profile_user.profile.bio }}</p>
+                    </div>
+                </div>
+
+                {% for post in posts %}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 card-title">{{ post.title }}</h2>
+                        </div>
+                        <div class="card-body" style="background-color: #ADBC9F;">
+                            <p class="card-text">{{ post.content|linebreaksbr }}</p>
+                            {% if post.image %}
+                                <div class="post-image pb-3">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                         style="max-width:50%; cursor: pointer;"
+                                         data-bs-toggle="modal" data-bs-target="#imageModal{{ post.id }}">
+                                </div>
+                                <!-- Update the modal's ID -->
+                                <div class="modal fade" id="imageModal{{ post.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="imageModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                        <div class="modal-content" style="background: transparent; border: none;">
+                                            <div style="font-size: 2rem; text-align: left;">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div>
+                                                <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                                     style="width: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div style="display: flex; align-items: center;">
+                                <a style="font-size: 1.3rem; text-decoration: none; color: black"
+                                   class="like-button"
+                                   data-post-id="{{ post.id }}">
+                                    {% if user in post.likes.all %}
+                                        <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
+                                    {% else %}
+                                        <i class="far fa-heart"></i> <!-- Not liked -->
+                                    {% endif %}
+                                    <span class="like-count">{{ post.likes.count }}</span>
+                                </a>
+                                <!-- Comment button -->
+                                <a href="{% url 'post-detail' post.id %}" class="btn btn-info btn-sm"
+                                   style="margin-left: 1rem;">
+                                    <i class="fa fa-comments" aria-hidden="true"></i>
+                                    <span style="margin-left: 0.6rem">{{ post.comments.count }}</span>
+                                </a>
+                            </div>
+                            <p class="card-text pt-3"><small class="text-muted">
+                                Posted on {{ post.created_at|date:"F d, Y H:i" }}</small></p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No posts to show.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

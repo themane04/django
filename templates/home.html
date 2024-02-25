@@ -32,15 +32,17 @@
                     <div class="card" style="background-color: #ADBC9F">
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-muted">
-                                {% if post.author.profile.profile_pic %}
-                                    <img src="{{ post.author.profile.profile_pic.url }}"
-                                         alt="{{ post.author.username }}"
-                                         style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
-                                {% else %}
-                                    <img src="{% static 'images/default_profile_picture.png' %}"
-                                         alt="Default profile picture"
-                                         style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
-                                {% endif %}
+                                <a class="text-decoration-none" href="{% url 'user_public_profile' username=post.author.username %}">
+                                    {% if post.author.profile.profile_pic %}
+                                        <img src="{{ post.author.profile.profile_pic.url }}"
+                                             alt="{{ post.author.username }}"
+                                             style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
+                                    {% else %}
+                                        <img src="{% static 'images/default_profile_picture.png' %}"
+                                             alt="Default profile picture"
+                                             style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle;">
+                                    {% endif %}
+                                </a>
                                 {{ post.author.username }} on {{ post.created_at|date:"N j, Y, H:i" }}
                             </h6>
                             <h5 class="card-title">{{ post.title }}</h5>
