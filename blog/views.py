@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.http import require_POST, require_http_methods
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
@@ -27,28 +29,32 @@ class PostViewSet(viewsets.ModelViewSet):
         return Post.objects.all().order_by('-created_at')
 
 
-# function that handles the registration of a new user
-@csrf_exempt
-def register(request):
-    if request.method == 'POST':
+# class that handles the registration of a new user
+@method_decorator(csrf_exempt, name='dispatch')
+class RegisterView(View):
+    def get(self, request, *args, **kwargs):
+        form = UserRegisterForm()
+        return render(request, 'users/register.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect('login')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', {'form': form})
 
 
-# function that handles the login of a user
-@csrf_exempt
-def user_login(request):
-    context = {'error': None}
-    if request.method == "POST":
+@method_decorator(csrf_exempt, name='dispatch')
+class UserLoginView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'users/login.html', {'error': None})
+
+    def post(self, request, *args, **kwargs):
         email = request.POST.get('email')
         password = request.POST.get('password')
+        context = {'error': None}
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
@@ -61,8 +67,7 @@ def user_login(request):
             return redirect('home')
         else:
             context['error'] = 'Invalid email or password.'
-
-    return render(request, 'users/login.html', context)
+            return render(request, 'users/login.html', context)
 
 
 def is_loggedin(request):

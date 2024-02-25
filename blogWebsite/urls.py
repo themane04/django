@@ -1,12 +1,8 @@
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
-from blog import views
-
-from blog.views import register, home, user_login, user_logout, create_post, post_delete, edit_post, post_detail, \
+from blog.views import RegisterView, home, UserLoginView, user_logout, create_post, post_delete, edit_post, post_detail, \
     edit_profile, like_post, PostViewSet, mark_notification_read, notifications_all, clear_all_notifications, \
     user_profile, is_loggedin, comment_delete, create_comment
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,8 +11,8 @@ router.register('posts', PostViewSet)
 
 urlpatterns = [
                   path('', home, name='home'),
-                  path('register/', register, name='register'),
-                  path('login/', user_login, name='login'),
+                  path('register/', RegisterView.as_view(), name='register'),
+                  path('login/', UserLoginView.as_view(), name='login'),
                   path('logout/', user_logout, name='logout'),
                   path('post/new', create_post, name='create-post'),
                   path('post/delete/<int:post_id>', post_delete, name='post-delete'),
