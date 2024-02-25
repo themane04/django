@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from blog.views import RegisterView, home, UserLoginView, user_logout, CreatePostView, PostDeleteView, EditPostView, \
     PostDetailView, EditProfileView, LikePostView, PostViewSet, mark_notification_read, NotificationsAllView, \
-    clear_all_notifications, user_profile, is_loggedin, CommentDeleteView, CreateCommentView, user_public_profile
+    clear_all_notifications, user_profile, is_loggedin, CommentDeleteView, CreateCommentView, user_public_profile, \
+    DeleteProfileView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -30,6 +31,7 @@ urlpatterns = [
                   path('comment/<int:comment_id>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
                   path('post/<int:post_id>/comment/create/', CreateCommentView.as_view(), name='comment-create'),
                   path('profile/', EditProfileView.as_view(), name='edit_profile'),
+                  path('delete-profile/', DeleteProfileView.as_view(), name='delete-profile'),
                   path('like/<int:post_id>', LikePostView.as_view(), name='like_post'),
                   path('notifications/', NotificationsAllView.as_view(), name='notifications_all'),
               ] + static(settings.MEDIA_URL,

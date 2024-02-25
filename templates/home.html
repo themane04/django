@@ -1,6 +1,18 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
+
+    <div class="container card-body text-center">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <!-- Bootstrap Modal for Like Button Alert -->
     <div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertModalLabel"
          aria-hidden="true">

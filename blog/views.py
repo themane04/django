@@ -15,7 +15,7 @@ from rest_framework import viewsets
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout
 from django.views.generic import DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.edit import UpdateView
@@ -261,6 +261,21 @@ class EditProfileView(LoginRequiredMixin, View):
             'user_form': user_form,
             'profile_form': profile_form,
         })
+
+
+# class that allows a user to delete his profile
+class DeleteProfileView(LoginRequiredMixin, View):
+    template_name = 'users/confirm_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        logout(request)
+        messages.success(request, 'Your profile was successfully deleted.')
+        return redirect('home')
 
 
 # class that allows a user to create a comment

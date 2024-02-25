@@ -10,7 +10,7 @@ class Post(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='images/', blank=True, null=True)
     likes = models.ManyToManyField(User, related_name='post_likes')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
