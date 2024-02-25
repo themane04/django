@@ -205,6 +205,21 @@
         });
     });
 
+    document.addEventListener("DOMContentLoaded", function () {
+        var textarea = document.getElementById("content");
+
+        function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        }
+
+        // Call autoResize on textarea input to resize it on input
+        textarea.addEventListener("input", autoResize, false);
+
+        // Initialize textarea size on page load
+        autoResize.call(textarea);
+    });
+
 </script>
 </body>
 </html>

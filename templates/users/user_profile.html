@@ -4,14 +4,27 @@
 {% block content %}
     <article class="container mt-5">
         <header class="text-center mb-4">
-            <h1>{{ user.username }}'s Profile</h1>
+            {% if user.profile.profile_pic %}
+                <img src="{{ user.profile.profile_pic.url }}"
+                     class="rounded-circle"
+                     alt="Profile picture"
+                     style="width: 200px; height: 200px">
+            {% else %}
+                <img src="{% static 'images/default_profile_picture.png' %}"
+                     class="rounded-circle"
+                     style="width: 200px; height: 200px;"
+                     alt="Default profile picture">
+            {% endif %}
+            <h1>{{ user.username }}</h1>
             <!-- Button to Edit Profile -->
-            <a href="{% url 'edit_profile' %}" class="btn btn-primary mb-3">Edit Profile</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary mb-3">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
         </header>
 
         <section>
-            <h2 class="text-center mb-3">Your Posts</h2>
             <div class="container">
+                <h2 class="mb-3">Your Posts</h2>
                 <div class="row">
                     {% for post in user_posts %}
                         <div class="col-md-4 d-flex align-items-stretch">
@@ -19,7 +32,10 @@
                                 <div class="card-body" style="background-color: #ADBC9F">
                                     <h3 class="card-title">{{ post.title }}</h3>
                                     <p class="card-text">{{ post.content | truncatewords:20 }}</p>
-                                    <a href="{% url 'post-detail' post.id %}" class="btn btn-primary">Go to post</a>
+                                    <a href="{% url 'post-detail' post.id %}" class="btn btn-success"
+                                       title="Go to post">
+                                        <i class="fas fa-external-link-alt"></i> Go to Post
+                                    </a>
                                 </div>
                             </div>
                         </div>
