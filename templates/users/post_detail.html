@@ -19,7 +19,7 @@
                             {{ post.author.username }}
                         </a>
                     {% else %}
-                        <a href="{% url 'user_public_profile' username=post.author.username %}">
+                        <a style="text-decoration: none; color: black" href="{% url 'user_public_profile' username=post.author.username %}">
                             <img class="rounded-circle" src="{% static 'images/default_profile_picture.png' %}"
                                  alt="Default profile picture">
                             {{ post.author.username }}

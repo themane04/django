@@ -126,6 +126,7 @@
                                 <div style="display: flex; align-items: center;">
                                     <a style="font-size: 1.3rem; text-decoration: none; color: black"
                                        class="like-button"
+                                       onclick="sendLike({{ post.id }})"
                                        data-post-id="{{ post.id }}">
                                         {% if user in post.likes.all %}
                                             <i class="fas fa-heart" style="color: red;"></i> <!-- Liked -->
@@ -205,4 +206,35 @@
             </div>
         {% endif %}
     </div>
+    <script>
+        // Ensure you use the correct WebSocket URL for your setup
+        var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/posts/'
+        );
+
+
+        chatSocket.onmessage = function (e) {
+            var data = JSON.parse(e.data);
+            if (data.message_type === 'like') {
+                // Assuming data contains 'post_id' and 'new_like_count'
+                var likeElement = document.querySelector('.like-count[data-post-id="' + data.post_id + '"]');
+                if (likeElement) {
+                    likeElement.innerText = data.new_like_count;
+                }
+            }
+            // You can handle other message types here
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        function sendLike(postId) {
+            chatSocket.send(JSON.stringify({
+                'message_type': 'like',
+                'post_id': postId,
+            }));
+        }
+    </script>
 {% endblock %}

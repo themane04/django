@@ -11,7 +11,7 @@
                              alt="{{ profile_user.username }}'s Profile Picture"
                              style="width: 150px; height: 150px;">
                     {% else %}
-                        <img src="{% static 'default_profile_pic.png' %}" class="rounded-circle mr-3"
+                        <img src="{% static 'images/default_profile_picture.png' %}" class="rounded-circle mr-3"
                              alt="Default Profile Picture"
                              style="width: 150px; height: 150px;">
                     {% endif %}
@@ -22,6 +22,7 @@
                 <div class="text-center d-flex justify-content-center">
                     <p class="pb-5" style="max-width: 50%;">{{ profile_user.profile.bio }}</p>
                 </div>
+            <h1 class="pb-3">Posts</h1>
                 {% for post in posts %}
                     <div class="card mb-3">
                         <div class="card-header">

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-kwyp6-gwv=s88i%f2v+s-6*)8@82p8r*e-l+bgm(*wqf-eg^^c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.20.91', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.105', '10.58.123.114', '192.168.20.91', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'blog',
     'widget_tweaks',
     'rest_framework',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,15 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+# Channels
+ASGI_APPLICATION = 'blogWebsite.asgi.application'
+
+# Websocket
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 8000)],
+        },
+    },
+}
