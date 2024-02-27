@@ -26,7 +26,6 @@
         crossorigin="anonymous"></script>
 
 <style>
-
     body {
         background-color: #436850
     }
@@ -70,8 +69,6 @@
         vertical-align: middle;
         object-fit: cover;
     }
-
-
 </style>
 <script>
     // function that adjusts the padding-right of the body to account for the scrollbar width
@@ -97,7 +94,6 @@
 
     // Implemented an AJAX call using jQuery to allow users to like a blog post without refreshing the page, and to prompt
     // unauthenticated users to log in if they attempt to like a post.
-
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -113,8 +109,10 @@
         return cookieValue;
     }
 
+    // Get the CSRF token from the cookie
     const csrftoken = getCookie('csrftoken');
 
+    // Set the CSRF token in the AJAX request header
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!this.crossDomain) {
@@ -122,7 +120,6 @@
             }
         }
     });
-
 
     // a function that handles the like button click event and sends an AJAX request to the server
     function handleLikeClick(e) {
@@ -161,7 +158,6 @@
         });
     }
 
-
     // Debounce the like button click event to prevent spam clicking
     const debouncedLikeClick = debounce(handleLikeClick, 250);
 
@@ -172,7 +168,6 @@
         });
     });
 
-
     // function that adjusts the input field height to match the content
     $(document).ready(function () {
         $('.form-control').on('input', function () {
@@ -181,6 +176,7 @@
         });
     });
 
+    // function that closes the alert when the close button is clicked
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -193,6 +189,7 @@
         });
     });
 
+    // function that closes the alert when the close button is clicked
     document.addEventListener("DOMContentLoaded", function () {
         var fileInputs = document.querySelectorAll('.form-control-file');
 
@@ -205,6 +202,7 @@
         });
     });
 
+    // function that adjusts the input field height to match the content
     document.addEventListener("DOMContentLoaded", function () {
         var textarea = document.getElementById("content");
 
@@ -218,6 +216,50 @@
 
         // Initialize textarea size on page load
         autoResize.call(textarea);
+    });
+
+    // function that closes the alert when the close button is clicked
+    $(document).ready(function () {
+        $('.alert-dismissible .close').on('click', function () {
+            $(this).parent().alert('close');
+        });
+    });
+
+    // Ensure you use the correct WebSocket URL for your setup
+    var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/posts/'
+    );
+
+    // Handle incoming messages
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        if (data.message_type === 'like') {
+            // Assuming data contains 'post_id' and 'new_like_count'
+            var likeElement = document.querySelector('.like-count[data-post-id="' + data.post_id + '"]');
+            if (likeElement) {
+                likeElement.innerText = data.new_like_count;
+            }
+        }
+        // You can handle other message types here
+    };
+
+    // Handle errors
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // function that sends a like message to the server
+    function sendLike(postId) {
+        chatSocket.send(JSON.stringify({
+            'message_type': 'like',
+            'post_id': postId,
+        }));
+    }
+
+    // function that sends a comment message to the server
+    document.querySelector('form').addEventListener('submit', function () {
+        this.querySelector('button[type="submit"]').setAttribute('disabled', 'true');
     });
 </script>
 </body>

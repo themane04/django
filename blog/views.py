@@ -1,85 +1,26 @@
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.decorators.http import require_POST, require_http_methods
-from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import Post, Comment, Notification, Profile
-from rest_framework import viewsets
-from .serializers import PostSerializer, CommentSerializer
-from rest_framework.permissions import IsAuthenticated
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
-from django.views.generic import DetailView, ListView
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic.edit import UpdateView
+from django.contrib.auth.models import User
+from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-
-
-# function that checks if a user is logged in
-def is_loggedin(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-
-# function that handles the logout of a user
-@csrf_exempt
-def user_logout(request):
-    request.session.flush()
-    return redirect('home')
-
-
-# function that handles the home page of the website
-def home(request):
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'home.html', {'posts': posts})
-
-
-# function that handles the profile page of a user
-def user_profile(request):
-    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
-    return render(request, 'users/user_profile.html', {'user_posts': user_posts})
-
-
-# function that handles the public profile page of a user
-def user_public_profile(request, username):
-    user_profile = get_object_or_404(Profile, user__username=username)
-    posts = Post.objects.filter(author=user_profile.user)
-    return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
-
-
-# function that marks a notification as read
-def mark_notification_read(request, notification_id):
-    notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
-    notification.is_read = True
-    notification.save()
-    return redirect('post-detail', post_id=notification.post.id)
-
-
-# function that clears all notifications
-@login_required
-def clear_all_notifications(request):
-    request.user.received_notifications.all().delete()
-    return redirect('notifications_all')
-
-
-# function that handles the creation of a new comment
-@receiver(post_save, sender=Comment)
-def create_notification(sender, instance, created, **kwargs):
-    if created and instance.author != instance.post.author:
-        Notification.objects.create(
-            post=instance.post,
-            sender=instance.author,
-            receiver=instance.post.author,
-            notification_type=Notification.COMMENT,
-            is_read=False
-        )
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import UpdateView
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
+from .models import Post, Comment, Notification, Profile
+from .serializers import PostSerializer
 
 
 # class that handles the creation of a new post
@@ -291,10 +232,18 @@ class CreateCommentView(LoginRequiredMixin, View):
             new_comment.save()
 
             if post.author != request.user:
-                Notification.objects.create(
-                    post=post, sender=request.user, receiver=post.author,
+                notification_exists = Notification.objects.filter(
+                    post=post,
+                    sender=request.user,
+                    receiver=post.author,
                     notification_type=Notification.COMMENT
-                )
+                ).exists()
+                if not notification_exists:
+                    Notification.objects.create(
+                        post=post, sender=request.user, receiver=post.author,
+                        notification_type=Notification.COMMENT
+                    )
+
             return redirect(post.get_absolute_url())
         else:
             return render(request, 'users/post_detail.html', {'form': form, 'post': post})
@@ -315,7 +264,8 @@ class NotificationsAllView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['unread_count'] = self.get_queryset().filter(is_read=False).count()
+        self.request.user.received_notifications.filter(is_read=False).update(is_read=True)
+        context['unread_count'] = 0
         return context
 
 
@@ -357,3 +307,65 @@ class LikePostView(LoginRequiredMixin, View):
             'liked': liked,
             'like_count': like_count,
         })
+
+
+# function that checks if a user is logged in
+def is_loggedin(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+
+# function that handles the logout of a user
+@csrf_exempt
+def user_logout(request):
+    request.session.flush()
+    return redirect('home')
+
+
+# function that handles the home page of the website
+def home(request):
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'home.html', {'posts': posts})
+
+
+# function that handles the profile page of a user
+def user_profile(request):
+    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
+    return render(request, 'users/user_profile.html', {'user_posts': user_posts})
+
+
+# function that handles the public profile page of a user
+def user_public_profile(request, username):
+    user_profile = get_object_or_404(Profile, user__username=username)
+    posts = Post.objects.filter(author=user_profile.user)
+    return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
+
+
+# function that marks a notification as read
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('post-detail', post_id=notification.post.id)
+
+
+# function that clears all notifications
+@login_required
+def clear_all_notifications(request):
+    request.user.received_notifications.all().delete()
+    return redirect('notifications_all')
+
+
+# function that handles the creation of a new comment
+@receiver(post_save, sender=Comment)
+def create_notification(sender, instance, created, **kwargs):
+    if created:
+        with transaction.atomic():
+            if created and instance.author != instance.post.author:
+                Notification.objects.create(
+                    post=instance.post,
+                    sender=instance.author,
+                    receiver=instance.post.author,
+                    notification_type=Notification.COMMENT,
+                    is_read=False
+                )

@@ -1,5 +1,4 @@
 from django.urls import reverse
-from . import signals
 from django.db import models
 from django.contrib.auth.models import User
 
