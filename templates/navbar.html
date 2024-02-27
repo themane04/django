@@ -33,7 +33,7 @@
     <div class="container-lg container-fluid">
         <a class="navbar-brand d-flex align-items-center justify-content-center" href="{% url 'home' %}"
            style="width: 100px; height: 100px;">
-            <img src="/static/images/logo.png" alt="" width="200" height="200" class="d-inline-block align-text-top">
+            <img src="{% static "logo.png" %}" alt="" width="200" height="200" class="d-inline-block align-text-top">
             <span style="font-size: 2rem">Minigram</span>
         </a>
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
@@ -70,7 +70,7 @@
                                                              class="rounded-circle" alt="Profile Picture"
                                                              style="border: 10px solid red">
                                                     {% else %}
-                                                        <img src="{% static '/images/default_profile_picture.png' %}"
+                                                        <img src="{% static 'default_profile_picture.jpg' %}"
                                                              class="rounded-circle" alt="Profile Picture"
                                                              style="border: 2px solid black">
                                                     {% endif %}
@@ -106,7 +106,7 @@
                                 <img class="rounded-circle" src="{{ user.profile.profile_pic.url }}"
                                      alt="Profile Image">
                             {% else %}
-                                <img class="rounded-circle" src="{% static '/images/default_profile_picture.png' %}"
+                                <img class="rounded-circle" src="{% static 'default_profile_picture.jpg' %}"
                                      alt="Default Profile Image">
                             {% endif %}
                         </a>

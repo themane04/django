@@ -21,7 +21,7 @@
                     {% else %}
                         <a style="text-decoration: none; color: black"
                            href="{% url 'user_public_profile' username=post.author.username %}">
-                            <img class="rounded-circle" src="{% static 'images/default_profile_picture.png' %}"
+                            <img class="rounded-circle" src="{% static 'default_profile_picture.jpg' %}"
                                  alt="Default profile picture">
                             {{ post.author.username }}
                         </a>
@@ -184,7 +184,7 @@
                                                  alt="{{ comment.author.username }}">
                                         {% else %}
                                             <img class="rounded-circle"
-                                                 src="{% static 'images/default_profile_picture.png' %}"
+                                                 src="{% static 'default_profile_picture.jpg' %}"
                                                  alt="Default profile picture">
                                         {% endif %}
                                         <strong>{{ comment.author.username }}</strong>

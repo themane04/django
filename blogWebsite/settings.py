@@ -29,7 +29,8 @@ SECRET_KEY = 'django-insecure-kwyp6-gwv=s88i%f2v+s-6*)8@82p8r*e-l+bgm(*wqf-eg^^c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.105', '10.58.123.114', '192.168.20.91', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*', '4967-2a02-1210-4067-cb00-1908-d446-abf6-93e2.ngrok-free.app', '192.168.1.105', '10.58.123.114',
+                 '192.168.20.91', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -128,7 +129,7 @@ now = timezone.now()
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -138,22 +139,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
-
 # LOGIN_URL is the URL where requests are redirected for login, especially when using the login_required() decorator.
 LOGIN_URL = '/login/'
-
-# MEDIA_ROOT is the filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # MEDIA_URL is the URL that serves the media files uploaded by users.
 # It's used to generate the URL for these files.
 MEDIA_URL = '/media/'
 
 # STATIC_ROOT is the filesystem path to the directory that will hold static files collected from each of the apps.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/staticfiles')
 
 # Rest Framework Settings
 REST_FRAMEWORK = {
@@ -175,7 +169,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 8000)],
+            "hosts": [('localhost', 6379)],
         },
     },
 }
