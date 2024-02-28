@@ -47,7 +47,6 @@ class Notification(models.Model):
     # Types of notifications
     COMMENT = 'comment'
     LIKE = 'like'
-    # More types can be added as needed
 
     NOTIFICATION_TYPES = [
         (COMMENT, 'Comment'),

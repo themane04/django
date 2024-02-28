@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-kwyp6-gwv=s88i%f2v+s-6*)8@82p8r*e-l+bgm(*wqf-eg^^c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '4967-2a02-1210-4067-cb00-1908-d446-abf6-93e2.ngrok-free.app', '192.168.1.105', '10.58.123.114',
+ALLOWED_HOSTS = ['192.168.1.105', '10.58.123.114',
                  '192.168.20.91', 'localhost', '127.0.0.1']
 
 # Application definition
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'blog',
     'widget_tweaks',
     'rest_framework',
-    'channels',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'blogWebsite.urls'
@@ -147,7 +147,9 @@ LOGIN_URL = '/login/'
 MEDIA_URL = '/media/'
 
 # STATIC_ROOT is the filesystem path to the directory that will hold static files collected from each of the apps.
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'blog/static')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Rest Framework Settings
 REST_FRAMEWORK = {
@@ -161,32 +163,4 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-# Channels
-ASGI_APPLICATION = 'blogWebsite.asgi.application'
-
-# Websocket
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('localhost', 6379)],
-        },
-    },
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        '': {  # This configures the root logger to print all messages to the console
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
+APPEND_SLASH = False

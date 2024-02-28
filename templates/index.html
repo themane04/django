@@ -9,7 +9,7 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="{% static '/../static/images/logo.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'logo_fav_transparent.png' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
 
@@ -226,42 +226,6 @@
         });
     });
 
-    // Ensure you use the correct WebSocket URL for your setup
-    var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/posts/'
-    );
-
-    // Handle incoming messages
-    chatSocket.onmessage = function (e) {
-        var data = JSON.parse(e.data);
-        if (data.message_type === 'like') {
-            // Assuming data contains 'post_id' and 'new_like_count'
-            var likeElement = document.querySelector('.like-count[data-post-id="' + data.post_id + '"]');
-            if (likeElement) {
-                likeElement.innerText = data.new_like_count;
-            }
-        }
-        // You can handle other message types here
-    };
-
-    // Handle errors
-    chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-
-    // function that sends a like message to the server
-    function sendLike(postId) {
-        chatSocket.send(JSON.stringify({
-            'message_type': 'like',
-            'post_id': postId,
-        }));
-    }
-
-    // function that sends a comment message to the server
-    document.querySelector('form').addEventListener('submit', function () {
-        this.querySelector('button[type="submit"]').setAttribute('disabled', 'true');
-    });
 </script>
 </body>
 </html>

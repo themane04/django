@@ -23,6 +23,53 @@ from .models import Post, Comment, Notification, Profile
 from .serializers import PostSerializer
 
 
+# function that handles the creation of a new comment
+@receiver(post_save, sender=Comment)
+def create_notification(sender, instance, created, **kwargs):
+    if created:
+        with transaction.atomic():
+            if created and instance.author != instance.post.author:
+                Notification.objects.create(
+                    post=instance.post,
+                    sender=instance.author,
+                    receiver=instance.post.author,
+                    notification_type=Notification.COMMENT,
+                    is_read=False
+                )
+
+
+# function that checks if a user is logged in
+def is_loggedin(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+
+# function that handles the logout of a user
+@csrf_exempt
+def user_logout(request):
+    request.session.flush()
+    return redirect('home')
+
+
+# function that handles the home page of the website
+def home(request):
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'home.html', {'posts': posts})
+
+
+# function that handles the profile page of a user
+def user_profile(request):
+    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
+    return render(request, 'users/user_profile.html', {'user_posts': user_posts})
+
+
+# function that handles the public profile page of a user
+def user_public_profile(request, username):
+    user_profile = get_object_or_404(Profile, user__username=username)
+    posts = Post.objects.filter(author=user_profile.user)
+    return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
+
+
 # class that handles the creation of a new post
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -104,8 +151,24 @@ class PostDeleteView(View):
         post.delete()
         return redirect('home')
 
+    def delete(self, request, post_id, *args, **kwargs):
+        post = get_object_or_404(Post, id=post_id)
+
+        if post.author != request.user:
+            # Forbidden access, user is not the author of the post
+            return JsonResponse({'error': 'You do not have permission to delete this post'}, status=403)
+
+        # If the post has an associated image, delete it as well
+        if post.image:
+            post.image.delete()
+
+        post.delete()
+        # For an API view, instead of redirecting, return a JSON response indicating success
+        return JsonResponse({'message': 'Post deleted successfully'}, status=204)
+
 
 # class that allows a user to edit a post
+@method_decorator(csrf_exempt, name='dispatch')
 class EditPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
@@ -155,6 +218,7 @@ class PostDetailView(DetailView):
 
 
 # class that allows a user to delete a comment
+@method_decorator(csrf_exempt, name='dispatch')
 class CommentDeleteView(LoginRequiredMixin, View):
     def post(self, request, comment_id, *args, **kwargs):
         comment = get_object_or_404(Comment, id=comment_id)
@@ -166,8 +230,20 @@ class CommentDeleteView(LoginRequiredMixin, View):
         else:
             return HttpResponseForbidden('You do not have permission to delete this comment.')
 
+    def delete(self, request, comment_id, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=comment_id)
+
+        # Check if the request user is the author of the comment or an admin
+        if request.user == comment.author or request.user.is_superuser:
+            comment.delete()
+            return JsonResponse({'message': 'Comment successfully deleted'}, status=204)
+        else:
+            # If the user does not have permission to delete the comment
+            return JsonResponse({'error': 'You do not have permission to delete this comment'}, status=403)
+
 
 # function that allows a user to edit his profile information
+@method_decorator(csrf_exempt, name='dispatch')
 class EditProfileView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user_form = UserUpdateForm(instance=request.user)
@@ -205,6 +281,7 @@ class EditProfileView(LoginRequiredMixin, View):
 
 
 # class that allows a user to delete his profile
+@method_decorator(csrf_exempt, name='dispatch')
 class DeleteProfileView(LoginRequiredMixin, View):
     template_name = 'users/confirm_delete.html'
 
@@ -220,6 +297,7 @@ class DeleteProfileView(LoginRequiredMixin, View):
 
 
 # class that allows a user to create a comment
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateCommentView(LoginRequiredMixin, View):
     def post(self, request, post_id, *args, **kwargs):
         post = get_object_or_404(Post, pk=post_id)
@@ -269,13 +347,31 @@ class NotificationsAllView(LoginRequiredMixin, ListView):
         return context
 
 
+# function that marks a notification as read
+@method_decorator(csrf_exempt, name='dispatch')
+class MarkNotificationReadView(LoginRequiredMixin, View):
+    def post(self, request, notification_id, *args, **kwargs):
+        notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
+        notification.is_read = True
+        notification.save()
+        return JsonResponse({'message': 'Notification marked as read', 'post_id': notification.post.id}, status=200)
+
+
+# function that clears all notifications
+@method_decorator(csrf_exempt, name='dispatch')  # Consider CSRF protection strategy for your case
+class ClearAllNotificationsView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        request.user.received_notifications.all().delete()
+        return JsonResponse({'message': 'All notifications cleared successfully'}, status=200)
+
+
 @method_decorator(require_POST, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class LikePostView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         post_id = kwargs.get('post_id')
         post = get_object_or_404(Post, id=post_id)
         user = request.user
-        liked = False
 
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
@@ -307,65 +403,3 @@ class LikePostView(LoginRequiredMixin, View):
             'liked': liked,
             'like_count': like_count,
         })
-
-
-# function that checks if a user is logged in
-def is_loggedin(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-
-# function that handles the logout of a user
-@csrf_exempt
-def user_logout(request):
-    request.session.flush()
-    return redirect('home')
-
-
-# function that handles the home page of the website
-def home(request):
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'home.html', {'posts': posts})
-
-
-# function that handles the profile page of a user
-def user_profile(request):
-    user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
-    return render(request, 'users/user_profile.html', {'user_posts': user_posts})
-
-
-# function that handles the public profile page of a user
-def user_public_profile(request, username):
-    user_profile = get_object_or_404(Profile, user__username=username)
-    posts = Post.objects.filter(author=user_profile.user)
-    return render(request, 'user_public_profile.html', {'profile_user': user_profile.user, 'posts': posts})
-
-
-# function that marks a notification as read
-def mark_notification_read(request, notification_id):
-    notification = get_object_or_404(Notification, pk=notification_id, receiver=request.user)
-    notification.is_read = True
-    notification.save()
-    return redirect('post-detail', post_id=notification.post.id)
-
-
-# function that clears all notifications
-@login_required
-def clear_all_notifications(request):
-    request.user.received_notifications.all().delete()
-    return redirect('notifications_all')
-
-
-# function that handles the creation of a new comment
-@receiver(post_save, sender=Comment)
-def create_notification(sender, instance, created, **kwargs):
-    if created:
-        with transaction.atomic():
-            if created and instance.author != instance.post.author:
-                Notification.objects.create(
-                    post=instance.post,
-                    sender=instance.author,
-                    receiver=instance.post.author,
-                    notification_type=Notification.COMMENT,
-                    is_read=False
-                )
