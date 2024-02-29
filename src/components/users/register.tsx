@@ -26,8 +26,9 @@ const Register: React.FC = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         const adjustedName = name === 'firstName' ? 'first_name' : name === 'lastName' ? 'last_name' : name;
-        setFormData({...formData, [e.target.name]: e.target.value});
+        setFormData({...formData, [adjustedName]: value});
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,7 +40,6 @@ const Register: React.FC = () => {
         }
 
         try {
-            // Adjust the URL to your API endpoint
             const response = await axios.post('http://localhost:8000/api/register/', formData);
             console.log(response.data);
             // Redirect on successful registration
@@ -84,7 +84,7 @@ const Register: React.FC = () => {
                                             type="text"
                                             className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
                                             id="firstname"
-                                            name="first_name"
+                                            name="firstName"
                                             value={formData.first_name}
                                             onChange={handleChange}
                                             required
@@ -97,7 +97,7 @@ const Register: React.FC = () => {
                                             type="text"
                                             className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
                                             id="lastname"
-                                            name="last_name"
+                                            name="lastName"
                                             value={formData.last_name}
                                             onChange={handleChange}
                                             required
