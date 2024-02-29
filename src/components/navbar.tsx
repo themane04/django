@@ -1,7 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBell} from '@fortawesome/free-solid-svg-icons';
+import {useAuth} from "./users/auth";
+import Dropdown from "react-bootstrap/Dropdown";
+
 
 interface NavbarProps {
     isAuthenticated?: boolean;
@@ -9,7 +12,16 @@ interface NavbarProps {
     profilePic?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({isAuthenticated = false, username, profilePic}) => {
+const Navbar: React.FC<NavbarProps> = ({username, profilePic}) => {
+    const defaultProfilePic = 'default_profile_picture.jpg';
+    const {isAuthenticated, setIsAuthenticated} = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        sessionStorage.removeItem('token');
+        setIsAuthenticated(false);
+        navigate('/');
+    }
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark">
             <div className="container-lg container-fluid">
@@ -31,23 +43,17 @@ const Navbar: React.FC<NavbarProps> = ({isAuthenticated = false, username, profi
                         )}
                     </ul>
                     {isAuthenticated && (
-                        <ul className="navbar-nav align-items-center ms-auto">
-                            <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle" to="#" role="button"
-                                      data-bs-toggle="dropdown" aria-expanded="false">
-                                    {profilePic ? (
-                                        <img src={profilePic} alt="Profile" className="rounded-circle"
-                                             style={{width: '40px', height: '40px'}}/>
-                                    ) : (
-                                        <FontAwesomeIcon icon={faBell}/>
-                                    )}
-                                </Link>
-                                <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><Link className="dropdown-item" to="/logout">Logout</Link></li>
-                                    <li><Link className="dropdown-item" to="/profile">Your Profile</Link></li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <Dropdown>
+                            <Dropdown.Toggle variant="none" id="dropdown-basic">
+                                <img src={profilePic || defaultProfilePic} alt="Profile" className="rounded-circle"
+                                     style={{width: '40px', height: '40px'}}/>
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="/profile">Your Profile</Dropdown.Item>
+                                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
                     )}
                     {!isAuthenticated && (
                         <ul className="navbar-nav ms-auto">

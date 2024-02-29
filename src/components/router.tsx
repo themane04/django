@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Routes, Route, useNavigate} from 'react-router-
 import Home from './home';
 import Register from './users/register';
 import Navbar from './navbar';
-import {LoginWrapper} from "./users/login_wrapper";
+import {LoginWrapper} from "./wrappers/login_wrapper";
 
 
 const AppRouter = () => {

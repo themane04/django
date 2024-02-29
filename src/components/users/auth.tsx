@@ -1,27 +1,34 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+// Import React dependencies
+import React, {createContext, ReactNode, useContext, useState, useEffect} from 'react';
+import axios from "axios";
 
 interface AuthContextType {
     isAuthenticated: boolean;
     setIsAuthenticated: (value: boolean) => void;
 }
 
-// Define the default value based on the interface
 const defaultValue: AuthContextType = {
-    isAuthenticated: false, // Default value
-    setIsAuthenticated: () => {}, // Placeholder function
+    isAuthenticated: false,
+    setIsAuthenticated: () => {
+    },
 };
 
-// Create context with the default value
+
 const AuthContext = createContext<AuthContextType>(defaultValue);
 
-// AuthProvider component
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const AuthProvider = ({children}: { children: ReactNode }) => {
+    // Initialize isAuthenticated based on the presence of a token in sessionStorage
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!sessionStorage.getItem('token'));
 
-    const value = { isAuthenticated, setIsAuthenticated };
+    // Optionally, sync isAuthenticated state with sessionStorage on app load
+    useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        setIsAuthenticated(!!token);
+    }, []);
+
+    const value = {isAuthenticated, setIsAuthenticated};
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook to use the auth context
 export const useAuth = () => useContext(AuthContext);
