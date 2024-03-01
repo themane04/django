@@ -1,3 +1,6 @@
+import json
+import logging
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -16,8 +19,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 from .forms import UserRegisterForm, PostForm, CommentForm, ProfileUpdateForm, UserUpdateForm
 from .models import Post, Comment, Notification, Profile
 from .serializers import PostSerializer
@@ -26,16 +34,15 @@ from .serializers import PostSerializer
 # function that handles the creation of a new comment
 @receiver(post_save, sender=Comment)
 def create_notification(sender, instance, created, **kwargs):
-    if created:
-        with transaction.atomic():
-            if created and instance.author != instance.post.author:
-                Notification.objects.create(
-                    post=instance.post,
-                    sender=instance.author,
-                    receiver=instance.post.author,
-                    notification_type=Notification.COMMENT,
-                    is_read=False
-                )
+    with transaction.atomic():
+        if created and instance.author != instance.post.author:
+            Notification.objects.create(
+                post=instance.post,
+                sender=instance.author,
+                receiver=instance.post.author,
+                notification_type=Notification.COMMENT,
+                is_read=False
+            )
 
 
 # function that checks if a user is logged in
@@ -71,7 +78,7 @@ def user_public_profile(request, username):
 
 
 # class that handles the creation of a new post
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
@@ -83,48 +90,56 @@ class PostViewSet(viewsets.ModelViewSet):
 # class that handles the registration of a new user
 @method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(View):
-    def get(self, request, *args, **kwargs):
-        form = UserRegisterForm()
-        return render(request, 'users/register.html', {'form': form})
-
     def post(self, request, *args, **kwargs):
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}! You can now log in.')
-            return redirect('login')
-        return render(request, 'users/register.html', {'form': form})
+        try:
+            data = json.loads(request.body)
+            user = User.objects.create_user(
+                username=data['username'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                email=data['email'],
+                password=data['password1']
+            )
+            user.save()
+            return JsonResponse({"success": "User created successfully"}, status=201)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class UserLoginView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'users/login.html', {'error': None})
-
+class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        context = {'error': None}
+        # Parse the JSON body of the request
+        data = json.loads(request.body)
+        email = data.get('email')
+        password = data.get('password')
+
         try:
-            user = User.objects.get(email=email)
+            # Authenticate the user
+            user = authenticate(request, username=User.objects.get(email=email).username, password=password)
+            if user is not None:
+                # User is authenticated, log them in
+                login(request, user)
+
+                # Retrieve or create the token for the user
+                refresh = RefreshToken.for_user(user)
+
+                # Return a successful response with the token
+                return Response({"access": str(refresh.access_token)}, status=200)
+            else:
+                # Authentication failed
+                return JsonResponse({"error": "Invalid email or password"}, status=400)
         except User.DoesNotExist:
-            context['error'] = 'Invalid email or password.'
-            return render(request, 'users/login.html', context)
-
-        user = authenticate(username=user.username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            context['error'] = 'Invalid email or password.'
-            return render(request, 'users/login.html', context)
+            # No user found with the provided email
+            return JsonResponse({"error": "Invalid email or password"}, status=400)
 
 
-# class that handles the profile page of a user
+# class that allows a user to create a new post
 @method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(login_required, name='dispatch')
-class CreatePostView(View):
+class CreatePostView(APIView):
+    print('CreatePostView')
+
     def get(self, request, *args, **kwargs):
         form = PostForm()
         return render(request, 'home.html', {'form': form})

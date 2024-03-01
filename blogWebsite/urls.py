@@ -32,7 +32,6 @@ urlpatterns = [
                   path('api/clear-notifications/', ClearAllNotificationsView.as_view(), name='clear_notifications'),
                   path('api/notifications/', NotificationsAllView.as_view(), name='notifications_all'),
 
-
                   # Normal URLs
                   path('', home, name='home'),
                   path('logout/', user_logout, name='logout'),
