@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faBell} from '@fortawesome/free-solid-svg-icons';
 import {useAuth} from "./users/auth";
 import Dropdown from "react-bootstrap/Dropdown";
-
+import '../index.css'
 
 interface NavbarProps {
     isAuthenticated?: boolean;
@@ -44,11 +44,11 @@ const Navbar: React.FC<NavbarProps> = ({username, profilePic}) => {
                     </ul>
                     {isAuthenticated && (
                         <Dropdown>
-                            <Dropdown.Toggle variant="none" id="dropdown-basic">
+                            <Dropdown.Toggle variant="none" id="dropdown-basic" className="dropdown-no-arrow"
+                                             style={{border: 'none', boxShadow: 'none'}}>
                                 <img src={profilePic || defaultProfilePic} alt="Profile" className="rounded-circle"
-                                     style={{width: '40px', height: '40px'}}/>
+                                     style={{width: '40px', height: '40px', outline: 'none'}}/>
                             </Dropdown.Toggle>
-
                             <Dropdown.Menu>
                                 <Dropdown.Item href="/profile">Your Profile</Dropdown.Item>
                                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>

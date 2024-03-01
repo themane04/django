@@ -12,8 +12,7 @@ export const LoginWrapper = () => {
     const handleLogin = async (email: string, password: string) => {
         try {
             const response = await axios.post('http://localhost:8000/api/login/', {email, password});
-            const token = response.data.token;
-            console.log("Token:", token);
+            const token = response.data.access;
             // Store token in sessionStorage
             sessionStorage.setItem('token', token);
             // Correctly set the Authorization header using the token from sessionStorage
