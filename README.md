@@ -8,3 +8,4 @@ This project is on pause for now, but I’m hopeful about picking it up again in
 Check out the other branches!
 * [Minigram's Frontend with React](https://github.com/themane04/django/tree/minigram_frontend_react)
 * [Minigram only Django](https://github.com/themane04/django/tree/minigram)
+* [Notes project](https://github.com/themane04/django/tree/master)
