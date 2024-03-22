@@ -1,46 +1,14 @@
-# Getting Started with Create React App
+## Beginnings with Django
+On the ***master*** branch, you'll find my first Django project, a collaboration with my coach in my first year at the company. It’s a simple website for creating, editing, and deleting notes, which taught me the basics of web development. Along the way, we experimented with integrating APIs, learning how they can expand a website's capabilities by connecting with external software.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Minigram
+The [***minigram***](https://github.com/themane04/django/tree/minigram) branch showcases a more ambitious project I developed on my own: Minigram. It’s a social media platform where users can interact with posts, profiles, likes, and comments. What began as a project for learning morphed into a hobby, driven by my passion for coding and connecting people online.
 
-## Available Scripts
+I've put extra effort into Minigram, even in my free time, because it represents not just what I've learned but also what I love about development: bringing people together. Feel free to clone the minigram branch and see what Minigram is all about.
 
-In the project directory, you can run:
+## Bridging Frontend and Backend with React
+I took on a challenge to combine the strengths of Django and React, aiming for a seamless interaction between backend logic and a dynamic frontend. This led to creating two specific branches: one for developing Minigram’s frontend [***frontend***](https://github.com/themane04/django/tree/minigram_frontend_react) with React and another for adjusting the Django [***backend***](https://github.com/themane04/django/tree/minigram_backend_react) to ensure everything works together smoothly.
 
-### `npm start`
+Despite my enthusiasm and the progress made, I haven’t finished this project yet due to time constraints. However, the groundwork is there, and it’s been an eye-opening experience seeing how these two technologies can complement each other.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is on pause for now, but I’m hopeful about picking it up again in the future to see through its completion.
