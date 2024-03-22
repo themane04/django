@@ -6,5 +6,5 @@ Despite my enthusiasm and the progress made, I haven’t finished this project y
 This project is on pause for now, but I’m hopeful about picking it up again in the future to see through its completion.
 
 Check out the other branches!
-* [Minigram's React with React](https://github.com/themane04/django/tree/minigram_frontend_react)
+* [Minigram's Frontend with React](https://github.com/themane04/django/tree/minigram_frontend_react)
 * [Minigram only Django](https://github.com/themane04/django/tree/minigram)
