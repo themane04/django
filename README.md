@@ -6,3 +6,4 @@ I've put extra effort into Minigram, even in my free time, because it represents
 Check out the other branches!
 * [Minigram's Frontend with React](https://github.com/themane04/django/tree/minigram_frontend_react)
 * [Minigram's Backend with React changes](https://github.com/themane04/django/tree/minigram_backend_react)
+* [Notes project](https://github.com/themane04/django/tree/master)
