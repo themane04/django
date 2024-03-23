@@ -9,6 +9,11 @@ Check out the other branches!
 * [Notes project](https://github.com/themane04/django/tree/master)
 
 ## Setup
+### Clone and navigate into the repository
+```
+git clone -b minigram git@github.com:themane04/django.git
+cd django
+```
 ### Create and Activate a Virtual Environment
 Create a virtual environment named *.venv* in your project directory, and activate it using the appropriate command for your operating system:
 ```
