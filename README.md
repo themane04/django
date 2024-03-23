@@ -9,3 +9,21 @@ Check out the other branches!
 * [Minigram's Backend with the React changes](https://github.com/themane04/django/tree/minigram_backend_react)
 * [Minigram only Django](https://github.com/themane04/django/tree/minigram)
 * [Notes project](https://github.com/themane04/django/tree/master)
+
+
+## Setup
+
+> [!WARNING]  
+> In order for this to work you firstly need to setup the [backend branch](https://github.com/themane04/django/tree/minigram_backend_react). If you haven't already go and do that first and continue with the frontend afterwards.
+
+### Installing npm
+Open your terminal and run the following command to install all of the npm packages
+```
+npm install
+```
+
+### Start the Frontend
+Open your terminal and run the following command to start the sever
+```
+npm start
+```
