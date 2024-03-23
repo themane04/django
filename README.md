@@ -44,7 +44,7 @@ Create a New Database:
 * Name your database as you wish, but remember the name since you will need it.
 
 Configure Your *.env* File:
-* Update your .env file with the database connection details:
+* Update your .env file with the database connection details, all of the things that you need are in *.env.example*:
   * *DATABASE_NAME:* The name of the database you just created.
   * *DATABASE_USER:* Your PostgreSQL user name.
   * *DATABASE_PASSWORD:* Your PostgreSQL password.
