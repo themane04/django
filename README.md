@@ -71,4 +71,4 @@ py .\manage.py migrate
 ```
 
 ### Moving on to the Frontend
-After you've started the django server you can leave it like that and move onto the other branch [minigram_frontend_react](https://github.com/themane04/django/tree/minigram_frontend_react)
+After you've started the django server you can leave it like that and move onto the [frontend branch](https://github.com/themane04/django/tree/minigram_frontend_react).
