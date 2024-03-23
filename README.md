@@ -52,6 +52,18 @@ Configure Your *.env* File:
 > [!NOTE]  
 > Ensure that the database settings in your *.env* file match the credentials and database name you've set in pgAdmin to avoid connection issues.
 
+### Apply the Migrations to the Database
+Django uses migrations to apply changes made to your models (e.g., creating a new table, or adding a field to an existing table) into the database schema. To ensure your database structure matches your Django project's models, follow these steps:
+
+* In your terminal (ensure your virtual environment is active and you are in the project directory), run the following command to create migration files based on the changes detected in your models:
+```
+py .\manage.py makemigrations
+```
+* Next, apply these migrations to update your database schema:
+```
+py .\manage.py migrate
+```
+
 ### Run the Development Server
 Start Django's development server to view the project locally:
 ```
